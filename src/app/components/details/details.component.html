@@ -1,0 +1,30 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Detalles</span>
+</mat-toolbar>
+
+<div *ngIf="details">
+  <img
+    [src]="details.images[0]?.url || 'assets/no-image.png'"
+    class="detail-image"
+  />
+  <h2>{{ details.name }}</h2>
+  <p *ngIf="details.genres?.length">Géneros: {{ details.genres.join(", ") }}</p>
+  <p *ngIf="details.release_date">
+    Fecha de lanzamiento: {{ details.release_date }}
+  </p>
+  <!-- Más detalles según el tipo -->
+  <button
+    *ngIf="details.preview_url"
+    mat-raised-button
+    color="accent"
+    (click)="playPreview()"
+  >
+    Reproducir preview
+  </button>
+  <audio #audio controls *ngIf="details.preview_url">
+    <source [src]="details.preview_url" type="audio/mpeg" />
+  </audio>
+</div>

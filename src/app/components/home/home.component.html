@@ -1,0 +1,21 @@
+<mat-toolbar color="primary">
+  <span>Spotify App</span>
+</mat-toolbar>
+
+<div class="search-container">
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Buscar</mat-label>
+    <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" />
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="onSearch()">Buscar</button>
+</div>
+
+<div *ngIf="results?.length">
+  <mat-list>
+    <mat-list-item *ngFor="let item of results" (click)="viewDetails(item)">
+      <img matListAvatar [src]="item.images[0]?.url || 'assets/no-image.png'" />
+      <h4 matLine>{{ item.name }}</h4>
+      <p matLine>{{ item.type }}</p>
+    </mat-list-item>
+  </mat-list>
+</div>
