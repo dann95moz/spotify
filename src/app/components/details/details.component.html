@@ -1,30 +1,40 @@
-<mat-toolbar color="primary">
+<mat-toolbar>
   <button mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span>Detalles</span>
 </mat-toolbar>
 
-<div *ngIf="details">
-  <img
-    [src]="details.images[0]?.url || 'assets/no-image.png'"
-    class="detail-image"
-  />
+<div>
+  @if (details$ | async; as details) {
   <h2>{{ details.name }}</h2>
-  <p *ngIf="details.genres?.length">Géneros: {{ details.genres.join(", ") }}</p>
-  <p *ngIf="details.release_date">
-    Fecha de lanzamiento: {{ details.release_date }}
-  </p>
-  <!-- Más detalles según el tipo -->
-  <button
-    *ngIf="details.preview_url"
-    mat-raised-button
-    color="accent"
-    (click)="playPreview()"
-  >
-    Reproducir preview
+  <p>Tipo: {{ details.type }}</p>
+
+  @if (details.type === 'track') {
+  <p>Duración: {{ (details.duration_ms / 1000 / 60).toFixed(2) }} minutos</p>
+  <p>Albúm: {{ details.album.name }}</p>
+  <p>Fecha de lanzamiento: {{ details.album.release_date }}</p>
+  <button mat-raised-button color="primary" (click)="playPreview()">
+    Reproducir Preview
   </button>
-  <audio #audio controls *ngIf="details.preview_url">
-    <source [src]="details.preview_url" type="audio/mpeg" />
-  </audio>
+  <img
+    [src]="details.album.images[0].url"
+    alt=""
+    [height]="details.album.images[0].height"
+    [width]="details.album.images[0].width"
+  />
+  <audio #audio [src]="details.preview_url"></audio>
+  } @if (details.type === 'artist') {
+  <!-- Aquí puedes agregar la plantilla para el tipo 'artist' -->
+  } @if (details.type === 'album') {
+  <!-- Plantilla para AlbumElement -->
+  <img
+    [src]="details.images[0].url"
+    [height]="details.images[0].height"
+    [width]="details.images[0].width"
+  />
+  } }
 </div>
+@if(!(details$ | async)){
+<mat-spinner></mat-spinner>
+}

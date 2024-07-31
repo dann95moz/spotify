@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { EMPTY, Observable, throwError } from 'rxjs';
+import { EMPTY, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { TokenResponse } from './token.interface';
+import { Songs } from './search.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
+  deps: [HttpClient],
 })
 export class SpotifyService {
   private clientId = '1a4cabadab9a4d96ac5356d3f92b23fe';
@@ -40,21 +42,24 @@ export class SpotifyService {
       );
   }
 
-  private ensureTokenValid(): Observable<void> {
+  private ensureTokenValid(): Observable<void|null> {
+   
     if (!this.token || Date.now() > this.tokenExpirationTime) {
       return this.authenticate();
     }
-    return EMPTY;
+
+    return of(null);
   }
 
   search(query: string, type: string = 'track,artist,album'): Observable<any> {
     return this.ensureTokenValid().pipe(
       switchMap(() => {
+        
         const params = new HttpParams()
           .set('q', query)
           .set('type', type);
 
-        return this.http.get('https://api.spotify.com/v1/search', { headers: this.getHeaders(), params });
+        return this.http.get<Songs>('https://api.spotify.com/v1/search', { headers: this.getHeaders(), params });
       }),
       catchError(this.handleError)
     );
