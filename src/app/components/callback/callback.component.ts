@@ -15,13 +15,17 @@ export class CallbackComponent implements OnInit {
  this.route.queryParams.subscribe(params => {
       const code = params['code'];
       if (code) {
-        this.authService.getToken(code).subscribe(response => {
-          const token = response.access_token;
-          this.authService.saveToken(token);
-          window.location.href = '/login'; // Redirige a tu página principal
-        }, error => {
-          console.error('Error al obtener el token', error);
+        this.authService.getToken(code).subscribe({
+          next: (response) => {
+            const token = response.access_token;
+            this.authService.saveToken(token);
+            window.location.href = '/logged'; // Redirige a tu página principal
+          },
+          error: (error) => {
+            console.error('Error al obtener el token', error);
+          }
         });
+        
       }
     });
   }
