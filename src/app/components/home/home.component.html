@@ -15,7 +15,9 @@
 } @if (!isLoading && results.length) {
 <mat-list>
   @for (item of results; track item) {
-  <mat-list-item> {{ item.name }} ({{ item.type }}) </mat-list-item>
+  <mat-list-item (click)="viewDetails(item)">
+    {{ item.name }} ({{ item.type }})
+  </mat-list-item>
   }
 </mat-list>
 } @if (!isLoading && !results.length) {

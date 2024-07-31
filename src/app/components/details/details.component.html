@@ -10,31 +10,32 @@
   <h2>{{ details.name }}</h2>
   <p>Tipo: {{ details.type }}</p>
 
-  @if (details.type === 'track') {
+  @switch (details.type) { @case ('track'){
   <p>Duración: {{ (details.duration_ms / 1000 / 60).toFixed(2) }} minutos</p>
-  <p>Albúm: {{ details.album.name }}</p>
+  <p>Álbum: {{ details.album.name }}</p>
   <p>Fecha de lanzamiento: {{ details.album.release_date }}</p>
   <button mat-raised-button color="primary" (click)="playPreview()">
     Reproducir Preview
   </button>
   <img
     [src]="details.album.images[0].url"
-    alt=""
+    alt="{{ details.album.name }}"
     [height]="details.album.images[0].height"
     [width]="details.album.images[0].width"
   />
   <audio #audio [src]="details.preview_url"></audio>
-  } @if (details.type === 'artist') {
-  <!-- Aquí puedes agregar la plantilla para el tipo 'artist' -->
-  } @if (details.type === 'album') {
-  <!-- Plantilla para AlbumElement -->
+  } @case ('artist'){
+  <p>Artista: {{ details.name }}</p>
+  <p>Género: {{ details.genres }}</p>
+  } @case ('album'){
+  <p>Álbum: {{ details.name }}</p>
   <img
     [src]="details.images[0].url"
+    alt="{{ details.name }}"
     [height]="details.images[0].height"
     [width]="details.images[0].width"
   />
-  } }
+  } } } @else {
+  <mat-spinner></mat-spinner>
+  }
 </div>
-@if(!(details$ | async)){
-<mat-spinner></mat-spinner>
-}
