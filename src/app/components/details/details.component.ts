@@ -3,14 +3,14 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
-import {  AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Observable, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {MatProgressSpinner }from '@angular/material/progress-spinner';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { SpotifyService } from '../../services/api/spotify.service';
 import { AlbumElement, ArtistsItem, TracksItem } from '../../services/api/search.interface';
 
-type SpotifyItem= AlbumElement| ArtistsItem | TracksItem
+type SpotifyItem = AlbumElement | ArtistsItem | TracksItem;
 
 @Component({
   selector: 'app-details',
@@ -19,10 +19,10 @@ type SpotifyItem= AlbumElement| ArtistsItem | TracksItem
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent  {
+export class DetailsComponent {
   details$: Observable<SpotifyItem>;
   @ViewChild('audio') audio!: ElementRef<HTMLAudioElement>;
-  
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -32,10 +32,7 @@ export class DetailsComponent  {
       switchMap(params => this.spotifyService.getDetails(params['type'], params['id'])),
       tap(console.log)
     );
-   
   }
-
- 
 
   goBack(): void {
     this.router.navigate(['/']);
@@ -46,6 +43,19 @@ export class DetailsComponent  {
       this.audio.nativeElement.play();
     }
   }
-  login() {
+
+  playAudio(): void {
+    this.audio?.nativeElement.play();
+  }
+
+  pauseAudio(): void {
+    this.audio?.nativeElement.pause();
+  }
+
+  setVolume(event: any): void {
+    const volume = event.target.value;
+    if (this.audio?.nativeElement) {
+      this.audio.nativeElement.volume = volume;
+    }
   }
 }

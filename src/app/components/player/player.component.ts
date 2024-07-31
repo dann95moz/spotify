@@ -1,12 +1,62 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { PlayerService } from '../../services/player/player.service';
 
 @Component({
   selector: 'app-player',
-  standalone: true,
-  imports: [],
   templateUrl: './player.component.html',
-  styleUrl: './player.component.scss'
+  styleUrls: ['./player.component.scss'],
+  standalone: true,
 })
-export class PlayerComponent {
+export class PlayerComponent implements AfterViewInit {
+  constructor(private playerService: PlayerService) {
+   
+  }
 
+  ngAfterViewInit(): void {
+    // Initialize the player when the component is loaded
+
+  }
+
+  play() {
+    console.log('click');
+    
+    this.playerService.player?.play().then(() => {
+      console.log('Playback started');
+    }).catch((error:any) => {
+      console.error('Error starting playback', error);
+    });
+  }
+
+  pause() {
+    this.playerService.player?.pause().then(() => {
+      console.log('Playback paused');
+    }).catch((error:any) => {
+      console.error('Error pausing playback', error);
+    });
+  }
+
+  nextTrack() {
+    this.playerService.player?.nextTrack().then(() => {
+      console.log('Skipped to next track');
+    }).catch((error:any) => {
+      console.error('Error skipping to next track', error);
+    });
+  }
+
+  previousTrack() {
+    this.playerService.player?.previousTrack().then(() => {
+      console.log('Skipped to previous track');
+    }).catch((error:any) => {
+      console.error('Error skipping to previous track', error);
+    });
+  }
+
+  setVolume(event: any) {
+    const volume = event.target.value;
+    this.playerService.player?.setVolume(volume).then(() => {
+      console.log(`Volume set to ${volume}`);
+    }).catch((error:any) => {
+      console.error('Error setting volume', error);
+    });
+  }
 }

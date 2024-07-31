@@ -6,13 +6,21 @@ import { Injectable } from '@angular/core';
 })
 export class PlayerService {
 
-  constructor() { }
+  constructor() { 
+    if (typeof window.onSpotifyWebPlaybackSDKReady === 'undefined') {
+      console.warn('Spotify SDK not yet loaded');
+    } else {
+      console.log('Spotify SDK is already loaded');
+    }
+  }
   player: any;
 
   initializePlayer() {
     if (window.Spotify) {
       console.log('Initializing player');
       const token = localStorage.getItem('spotify_token');
+      console.log('token valid', token);
+      
 
       if (!token) {
         console.error('No token found in localStorage');

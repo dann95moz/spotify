@@ -1,1 +1,7 @@
-<p>player works!</p>
+<div class="player-controls">
+  <button (click)="play()">Play</button>
+  <button (click)="pause()">Pause</button>
+  <button (click)="nextTrack()">Next</button>
+  <button (click)="previousTrack()">Previous</button>
+  <input type="range" min="0" max="1" step="0.01" (input)="setVolume($event)" />
+</div>

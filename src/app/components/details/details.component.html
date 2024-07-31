@@ -9,21 +9,19 @@
   @if (details$ | async; as details) {
   <h2>{{ details.name }}</h2>
   <p>Tipo: {{ details.type }}</p>
-  <button (click)="login()">Iniciar sesión con Spotify</button>
   @switch (details.type) { @case ('track'){
   <p>Duración: {{ (details.duration_ms / 1000 / 60).toFixed(2) }} minutos</p>
   <p>Álbum: {{ details.album.name }}</p>
   <p>Fecha de lanzamiento: {{ details.album.release_date }}</p>
-  <button mat-raised-button color="primary" (click)="playPreview()">
-    Reproducir Preview
-  </button>
+
   <img
-    [src]="details.album.images[0].url"
+    [src]="details.album.images[1].url"
     alt="{{ details.album.name }}"
-    [height]="details.album.images[0].height"
-    [width]="details.album.images[0].width"
+    [height]="details.album.images[1].height"
+    [width]="details.album.images[1].width"
   />
-  <audio #audio [src]="details.preview_url"></audio>
+  <audio #audio [src]="details.preview_url" controls></audio>
+
   } @case ('artist'){
   <p>Artista: {{ details.name }}</p>
   <p>Género: {{ details.genres }}</p>

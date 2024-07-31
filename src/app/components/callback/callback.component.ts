@@ -1,7 +1,7 @@
 // src/app/components/callback/callback.component.ts
 
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/spotifyAuth/auth.service';
 
 @Component({
@@ -9,24 +9,12 @@ import { AuthService } from '../../services/spotifyAuth/auth.service';
   template: '<p>Loading...</p>',
 })
 export class CallbackComponent implements OnInit {
-  constructor(private route: ActivatedRoute, private authService: AuthService) {}
+  constructor(private route: ActivatedRoute, private authService: AuthService,private router:Router) {}
 
   ngOnInit(): void {
- this.route.queryParams.subscribe(params => {
-      const code = params['code'];
-      if (code) {
-        this.authService.getToken(code).subscribe({
-          next: (response) => {
-            const token = response.access_token;
-            this.authService.saveToken(token);
-            window.location.href = '/logged'; // Redirige a tu página principal
-          },
-          error: (error) => {
-            console.error('Error al obtener el token', error);
-          }
-        });
-        
-      }
+    this.route.queryParams.subscribe(params => {
+   console.log('callback params',params);
+   this.authService.handleCallback();
     });
   }
 }
