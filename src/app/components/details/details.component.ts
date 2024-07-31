@@ -26,7 +26,7 @@ export class DetailsComponent  {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private spotifyService: SpotifyService
+    private spotifyService: SpotifyService,
   ) {
     this.details$ = this.route.params.pipe(
       switchMap(params => this.spotifyService.getDetails(params['type'], params['id'])),
@@ -45,5 +45,7 @@ export class DetailsComponent  {
     if (this.audio?.nativeElement) {
       this.audio.nativeElement.play();
     }
+  }
+  login() {
   }
 }

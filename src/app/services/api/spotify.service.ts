@@ -10,8 +10,8 @@ import { Songs } from './search.interface';
   deps: [HttpClient],
 })
 export class SpotifyService {
-  private clientId = '1a4cabadab9a4d96ac5356d3f92b23fe';
-  private clientSecret = '04c669a207c748eca6dc7f72f3a18414';
+  public clientId = '1a4cabadab9a4d96ac5356d3f92b23fe';
+  public clientSecret = '04c669a207c748eca6dc7f72f3a18414';
   private token: string = '';
   private tokenExpirationTime: number = 0;
 

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { SpotifyService } from '../../services/api/spotify.service';
+import { AuthService } from '../../services/spotifyAuth/auth.service';
+import { PlayerService } from '../../services/player/player.service';
 
 interface SearchResult {
   id: string;
@@ -33,14 +35,24 @@ interface SearchResult {
   styleUrls: ['./home.component.scss'],
   
 })
-export class HomeComponent implements OnDestroy {
+export class HomeComponent implements OnDestroy , OnInit {
   searchQuery = '';
   results: SearchResult[] = [];
   isLoading = false;
   private destroy$ = new Subject<void>();
 
-  constructor(private spotifyService: SpotifyService, private router: Router) { }
+  constructor(private spotifyService: SpotifyService, private router: Router, private authService: AuthService,private playerService:PlayerService) { 
 
+  }
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+   
+  }
+  login() {
+    
+    this.authService.login();
+  }
   onSearch(): void {
     if (!this.searchQuery.trim()) return;
 

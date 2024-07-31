@@ -9,7 +9,7 @@
   @if (details$ | async; as details) {
   <h2>{{ details.name }}</h2>
   <p>Tipo: {{ details.type }}</p>
-
+  <button (click)="login()">Iniciar sesión con Spotify</button>
   @switch (details.type) { @case ('track'){
   <p>Duración: {{ (details.duration_ms / 1000 / 60).toFixed(2) }} minutos</p>
   <p>Álbum: {{ details.album.name }}</p>
