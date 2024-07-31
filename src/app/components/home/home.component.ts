@@ -5,10 +5,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import {MatProgressSpinner }from '@angular/material/progress-spinner';
-import { SpotifyService } from '../../services/spotify.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
+import { SpotifyService } from '../../services/api/spotify.service';
 
 interface SearchResult {
   id: string;

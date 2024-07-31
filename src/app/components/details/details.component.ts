@@ -3,12 +3,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SpotifyService } from '../../services/spotify.service';
 import {  AsyncPipe } from '@angular/common';
 import { Observable, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {MatProgressSpinner }from '@angular/material/progress-spinner';
-import { AlbumElement, ArtistsItem, TracksItem } from '../../services/search.interface';
+import { SpotifyService } from '../../services/api/spotify.service';
+import { AlbumElement, ArtistsItem, TracksItem } from '../../services/api/search.interface';
 
 type SpotifyItem= AlbumElement| ArtistsItem | TracksItem
 
