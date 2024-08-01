@@ -5,7 +5,7 @@
   <span>Detalles</span>
 </mat-toolbar>
 
-<div>
+<div class="details-container">
   @if (details$ | async; as details) {
   <h2>{{ details.name }}</h2>
   <p>Tipo: {{ details.type }}</p>
@@ -20,11 +20,20 @@
     [height]="details.album.images[1].height"
     [width]="details.album.images[1].width"
   />
+  <span>
+    <p>escucha un fragmeto</p>
+  </span>
   <audio #audio [src]="details.preview_url" controls></audio>
 
   } @case ('artist'){
   <p>Artista: {{ details.name }}</p>
   <p>Género: {{ details.genres }}</p>
+  <img
+    [src]="details.images[0].url"
+    alt="{{ details.name }}"
+    [height]="details.images[0].height"
+    [width]="details.images[0].width"
+  />
   } @case ('album'){
   <p>Álbum: {{ details.name }}</p>
   <img

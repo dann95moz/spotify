@@ -7,12 +7,15 @@ import { MatInputModule } from '@angular/material/input';
 import { User } from '../../services/api/user.interface';
 import { map, Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
-import { Item, PlayList } from '../../services/api/playList.interface';
-
+import { Item } from '../../services/api/playList.interface';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-logged',
   standalone: true,
-  imports: [MatFormField, FormsModule, MatFormFieldModule, MatInputModule,AsyncPipe],
+  imports: [MatFormField, FormsModule, MatFormFieldModule, MatInputModule,AsyncPipe, MatListModule,MatCardModule, MatIcon, MatButtonModule],
   templateUrl: './logged.component.html',
   styleUrl: './logged.component.scss'
 })

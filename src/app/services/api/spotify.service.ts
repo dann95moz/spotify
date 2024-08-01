@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { TokenResponse } from './token.interface';
-import { Songs } from './search.interface';
+import { SpotifySearch } from './search.interface';
 import { AuthService } from '../spotifyAuth/auth.service';
 import { PlayList } from './playList.interface';
 
@@ -78,7 +78,7 @@ export class SpotifyService {
       switchMap(() => {
         const params = new HttpParams().set('q', query).set('type', type);
         const headers = user ? this.getUserHeaders() : this.getClientHeaders();
-        return this.http.get<Songs>('https://api.spotify.com/v1/search', { headers, params });
+        return this.http.get<SpotifySearch>('https://api.spotify.com/v1/search', { headers, params });
       }),
       catchError(this.handleError)
     );

@@ -11,7 +11,9 @@ import { Subject, takeUntil } from 'rxjs';
 import { SpotifyService } from '../../services/api/spotify.service';
 import { AuthService } from '../../services/spotifyAuth/auth.service';
 import { PlayerService } from '../../services/player/player.service';
-
+import { MatIcon } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 interface SearchResult {
   id: string;
   type: string;
@@ -30,6 +32,9 @@ interface SearchResult {
     MatButtonModule,
     MatProgressSpinner,
     FormsModule,
+    MatIcon,
+    MatCardModule,
+    MatPaginatorModule
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -40,14 +45,14 @@ export class HomeComponent implements OnDestroy , OnInit {
   results: SearchResult[] = [];
   isLoading = false;
   private destroy$ = new Subject<void>();
-
+  paginatedResults: any[] = [];
+  pages:number=20
   constructor(private spotifyService: SpotifyService, private router: Router, private authService: AuthService,private playerService:PlayerService) { 
 
   }
   ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-   
+
+    this.paginatedResults = this.results.slice(0, this.pages);
   }
   login() {
     
@@ -72,7 +77,11 @@ export class HomeComponent implements OnDestroy , OnInit {
         }
       });
   }
-
+  onPageChange(event: PageEvent): void {
+    const startIndex = event.pageIndex * event.pageSize;
+    const endIndex = startIndex + event.pageSize;
+    this.paginatedResults = this.results.slice(startIndex, endIndex);
+  }
   private processSearchResults(response: any): SearchResult[] {
     // Procesa y combina los resultados de tracks, artists y albums
     const tracks = response.tracks?.items || [];

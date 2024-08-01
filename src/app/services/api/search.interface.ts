@@ -1,4 +1,4 @@
-export interface Songs {
+export interface SpotifySearch {
     albums:  Albums;
     artists: Artists;
     tracks:  Tracks;

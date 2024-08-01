@@ -1,26 +1,55 @@
-<button (click)="login()">Login with Spotify</button>
-<mat-form-field>
-  <input matInput [(ngModel)]="searchQuery" placeholder="Buscar en Spotify" />
-</mat-form-field>
-<button
-  mat-raised-button
-  color="primary"
-  (click)="onSearch()"
-  [disabled]="isLoading"
->
-  Buscar
-</button>
-@if (isLoading ) {
-<mat-spinner></mat-spinner>
+<div class="home-container">
+  <h1>Buscador de spotify</h1>
+  <h3>Busca tu canción, album o artista favorito</h3>
+  <form action="submit" (ngSubmit)="onSearch()" class="search">
+    <mat-form-field>
+      <input
+        matInput
+        [(ngModel)]="searchQuery"
+        placeholder="Buscar en Spotify"
+        name="queryMusic"
+      />
+    </mat-form-field>
+    <button mat-fab color="primary" [disabled]="isLoading" type="submit">
+      <mat-icon>search</mat-icon>
+    </button>
+  </form>
+  <button
+    (click)="login()"
+    mat-raised-button
+    style="background-color: #1ed760; color: black"
+    class="login-btn"
+  >
+    Login with Spotify
+  </button>
+  @if (isLoading ) {
+  <mat-spinner></mat-spinner>
 
-} @if (!isLoading && results.length) {
-<mat-list>
-  @for (item of results; track item) {
-  <mat-list-item (click)="viewDetails(item)">
-    {{ item.name }} ({{ item.type }})
-  </mat-list-item>
+  } @if(results.length){
+
+  <mat-paginator
+    [length]="results.length"
+    [pageSize]="5"
+    [pageSizeOptions]="[5, 10, 25, 100]"
+    aria-label="Select page"
+    (page)="onPageChange($event)"
+  >
+  </mat-paginator>
+  } @if (!isLoading && results.length) {
+  <div class="results">
+    <mat-card appearance="outlined" class="list">
+      <mat-card-content>
+        <mat-list>
+          @for (item of paginatedResults; track item) {
+          <mat-list-item (click)="viewDetails(item)" class="list-item">
+            <p>{{ item.name }} ({{ item.type }})</p>
+          </mat-list-item>
+          }
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  } @if (!isLoading && !results.length ) {
+  <p>No se encontraron resultados.</p>
   }
-</mat-list>
-} @if (!isLoading && !results.length) {
-<p>No se encontraron resultados.</p>
-}
+</div>

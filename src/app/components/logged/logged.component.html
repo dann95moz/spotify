@@ -1,33 +1,51 @@
-@if(userProfile){
-<p>Welcome, {{ userProfile.display_name }}!</p>
+<div class="logged-container">
+  @if(userProfile){
+  <p>Welcome, {{ userProfile.display_name }}!</p>
 
-} @if (playlists$ | async; as lists) { @for(list of lists; track list){
-<h3>{{ list.name }}</h3>
-<img [src]="list.images[0].url" alt="{{ list.name }}" width="200" />
-<p>{{ list.tracks.total }} canciones</p>
-} } @else {
-<p>cargando listas de reproduccion</p>
-}
+  }
+  <form (ngSubmit)="onSearch()" class="search">
+    <mat-form-field class="input">
+      <input
+        matInput
+        [(ngModel)]="searchQuery"
+        name="searchQuery"
+        placeholder="Buscar en Spotify"
+      />
+    </mat-form-field>
+    <button mat-fab color="primary" [disabled]="isLoading" type="submit">
+      <mat-icon>search</mat-icon>
+    </button>
+  </form>
+  <div class="lists">
+    @if(searchResults) {
 
-<form (ngSubmit)="onSearch()">
-  <mat-form-field>
-    <input
-      matInput
-      [(ngModel)]="searchQuery"
-      name="searchQuery"
-      placeholder="Buscar en Spotify"
-    />
-  </mat-form-field>
-  <button
-    mat-raised-button
-    color="primary"
-    [disabled]="isLoading"
-    type="submit"
-  >
-    Buscar
-  </button>
-</form>
+    <mat-card appearance="outlined" class="list">
+      <mat-card-content>
+        <mat-list>
+          @for (item of searchResults.tracks.items; track item) {
 
-@if(searchResults){ @for (item of searchResults.tracks.items; track item) {
+          <mat-list-item class="list-item">
+            <p>{{ item.name }} ({{ item.type }})</p>
+          </mat-list-item>
 
-{{ item.name }} ({{ item.type }}) } }
+          }
+        </mat-list>
+      </mat-card-content> </mat-card
+    >}@else{
+    <h3>Listas de reproducción</h3>
+    <div class="play-list-collection">
+      @if ((playlists$ | async ); as lists ) { @for(list of lists; track list){
+      <h3>{{ list.name }}</h3>
+      <img
+        [src]="list.images[0].url"
+        alt="{{ list.name }}"
+        height="{{ list.images[0].height }}"
+      />
+      <p>{{ list.tracks.total }} canciones</p>
+      } } @else {
+      <p>cargando listas de reproduccion</p>
+      }
+    </div>
+    }
+  </div>
+</div>

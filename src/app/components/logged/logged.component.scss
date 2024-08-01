@@ -1,0 +1,26 @@
+.input {
+  width: 100%;
+}
+.search {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.logged-container {
+  display: flex;
+  flex-direction: column;
+}
+.play-list-collection {
+  display: block;
+  max-height: 30vh;
+}
+.lists {
+  overflow-y: auto;
+  max-height: 60vh;
+}
+.list {
+  background-color: #1c1c1c;
+}
+.list-item {
+  color: white;
+}

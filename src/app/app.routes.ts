@@ -3,7 +3,6 @@ import { HomeComponent } from './components/home/home.component';
 import { DetailsComponent } from './components/details/details.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PrivateUserComponent } from './components/private-user/private-user.component';
 import { CallbackComponent } from './components/callback/callback.component';
 import { LoggedComponent } from './components/logged/logged.component';
 export const routes: Routes = [
