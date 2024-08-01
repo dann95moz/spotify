@@ -9,13 +9,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { SpotifyService } from '../../services/api/spotify.service';
 import { AlbumElement, ArtistsItem, TracksItem } from '../../services/api/search.interface';
+import { MatCardModule } from '@angular/material/card';
 
 type SpotifyItem = AlbumElement | ArtistsItem | TracksItem;
 
 @Component({
   selector: 'app-details',
   standalone: true,
-  imports: [MatToolbarModule, MatIconModule, MatButtonModule, MatProgressSpinner, AsyncPipe],
+  imports: [MatToolbarModule, MatIconModule, MatButtonModule, MatProgressSpinner, AsyncPipe, MatCardModule],
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })

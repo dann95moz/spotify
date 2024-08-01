@@ -11,16 +11,12 @@
   flex-direction: column;
 }
 .play-list-collection {
-  display: block;
-  max-height: 30vh;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
-.lists {
-  overflow-y: auto;
-  max-height: 60vh;
-}
-.list {
-  background-color: #1c1c1c;
-}
-.list-item {
-  color: white;
+.playlist {
+  display: flex;
+  flex-direction: column;
 }

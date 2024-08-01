@@ -19,12 +19,12 @@
   <div class="lists">
     @if(searchResults) {
 
-    <mat-card appearance="outlined" class="list">
+    <mat-card appearance="outlined">
       <mat-card-content>
         <mat-list>
           @for (item of searchResults.tracks.items; track item) {
 
-          <mat-list-item class="list-item">
+          <mat-list-item>
             <p>{{ item.name }} ({{ item.type }})</p>
           </mat-list-item>
 
@@ -35,13 +35,15 @@
     <h3>Listas de reproducción</h3>
     <div class="play-list-collection">
       @if ((playlists$ | async ); as lists ) { @for(list of lists; track list){
-      <h3>{{ list.name }}</h3>
-      <img
-        [src]="list.images[0].url"
-        alt="{{ list.name }}"
-        height="{{ list.images[0].height }}"
-      />
-      <p>{{ list.tracks.total }} canciones</p>
+      <div class="playlist">
+        <h3>{{ list.name }}</h3>
+        <img
+          [src]="list.images[0].url"
+          alt="{{ list.images[0].height }}"
+          height=" 300px "
+        />
+        <p>{{ list.tracks.total }} canciones</p>
+      </div>
       } } @else {
       <p>cargando listas de reproduccion</p>
       }
