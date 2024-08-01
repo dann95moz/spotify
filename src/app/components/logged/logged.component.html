@@ -1,6 +1,12 @@
 @if(userProfile){
 <p>Welcome, {{ userProfile.display_name }}!</p>
 
+} @if (playlists$ | async; as lists) { @for(list of lists; track list){
+<h3>{{ list.name }}</h3>
+<img [src]="list.images[0].url" alt="{{ list.name }}" width="200" />
+<p>{{ list.tracks.total }} canciones</p>
+} } @else {
+<p>cargando listas de reproduccion</p>
 }
 
 <form (ngSubmit)="onSearch()">

@@ -5,11 +5,14 @@ import { SpotifyService } from '../../services/api/spotify.service';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { User } from '../../services/api/user.interface';
+import { map, Observable } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
+import { Item, PlayList } from '../../services/api/playList.interface';
 
 @Component({
   selector: 'app-logged',
   standalone: true,
-  imports: [MatFormField, FormsModule, MatFormFieldModule, MatInputModule],
+  imports: [MatFormField, FormsModule, MatFormFieldModule, MatInputModule,AsyncPipe],
   templateUrl: './logged.component.html',
   styleUrl: './logged.component.scss'
 })
@@ -18,8 +21,13 @@ export class LoggedComponent implements OnInit{
   searchResults: any;
   isLoading: boolean = false;
   userProfile: any;
+  playlists$: Observable<Item[]>
   constructor(private spotifyService: SpotifyService) {
-    
+    this.playlists$ = this.spotifyService.getUserPlaylists().pipe(
+      map((listObject) => {
+        return listObject.items
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -27,7 +35,9 @@ export class LoggedComponent implements OnInit{
   }
   loadUserProfile() {
     this.spotifyService.getUserProfile().subscribe({
-      next: (profile:User) => {
+      next: (profile: User) => {
+        console.log(profile);
+        
         this.userProfile = profile;
       },
       error: (error) => {

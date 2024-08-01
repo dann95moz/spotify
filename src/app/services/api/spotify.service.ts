@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { TokenResponse } from './token.interface';
 import { Songs } from './search.interface';
 import { AuthService } from '../spotifyAuth/auth.service';
+import { PlayList } from './playList.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,8 @@ export class SpotifyService {
   private clientToken: string = '';
   private clientTokenExpirationTime: number = 0;
   private userToken: string | null = null;
-
+  private apiUrl = 'https://api.spotify.com/v1';
+  private userUri = 'https://api.spotify.com/v1/me'
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   private getClientHeaders(): HttpHeaders {
@@ -99,9 +101,21 @@ export class SpotifyService {
   getUserProfile(): Observable<any> {
     return this.ensureTokenValid(true).pipe(
       switchMap(() => {
-        return this.http.get('https://api.spotify.com/v1/me', { headers: this.getUserHeaders() });
+        return this.http.get(this.userUri, { headers: this.getUserHeaders() }).pipe(tap(console.log));
       }),
       catchError(this.handleError)
     );
   }
+  getUserPlaylists(): Observable<PlayList> {
+
+    return this.ensureTokenValid(true).pipe(
+      switchMap(() => {
+        return this.http.get<PlayList>(`${this.apiUrl}/me/playlists`, { headers: this.getUserHeaders() }).pipe(tap(console.log))      }),
+      catchError(this.handleError)
+    );
+
+ 
+
+  }
+  
 }
