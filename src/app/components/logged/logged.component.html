@@ -1,2 +1,27 @@
-<p>logged works!</p>
-<app-player></app-player>
+@if(userProfile){
+<p>Welcome, {{ userProfile.display_name }}!</p>
+
+}
+
+<form (ngSubmit)="onSearch()">
+  <mat-form-field>
+    <input
+      matInput
+      [(ngModel)]="searchQuery"
+      name="searchQuery"
+      placeholder="Buscar en Spotify"
+    />
+  </mat-form-field>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="isLoading"
+    type="submit"
+  >
+    Buscar
+  </button>
+</form>
+
+@if(searchResults){ @for (item of searchResults.tracks.items; track item) {
+
+{{ item.name }} ({{ item.type }}) } }

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { EMPTY, Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { TokenResponse } from './token.interface';
 import { Songs } from './search.interface';
+import { AuthService } from '../spotifyAuth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,63 +13,80 @@ import { Songs } from './search.interface';
 export class SpotifyService {
   public clientId = '1a4cabadab9a4d96ac5356d3f92b23fe';
   public clientSecret = '04c669a207c748eca6dc7f72f3a18414';
-  private token: string = '';
-  private tokenExpirationTime: number = 0;
+  private clientToken: string = '';
+  private clientTokenExpirationTime: number = 0;
+  private userToken: string | null = null;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
-  private getHeaders(): HttpHeaders {
+  private getClientHeaders(): HttpHeaders {
     return new HttpHeaders({
-      'Authorization': `Bearer ${this.token}`
+      'Authorization': `Bearer ${this.clientToken}`
     });
   }
 
-  private authenticate(): Observable<void> {
-    const body = new HttpParams()
-      .set('grant_type', 'client_credentials');
-  
+  private getUserHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Authorization': `Bearer ${this.userToken}`
+    });
+  }
+
+  private authenticateClient(): Observable<void> {
+    const body = new HttpParams().set('grant_type', 'client_credentials');
     const headers = new HttpHeaders({
       'Authorization': 'Basic ' + btoa(`${this.clientId}:${this.clientSecret}`),
       'Content-Type': 'application/x-www-form-urlencoded'
     });
-  
+
     return this.http.post<TokenResponse>('https://accounts.spotify.com/api/token', body, { headers })
       .pipe(
         map(response => {
-          this.token = response.access_token;
-          this.tokenExpirationTime = Date.now() + (response.expires_in * 1000);
+          this.clientToken = response.access_token;
+          this.clientTokenExpirationTime = Date.now() + (response.expires_in * 1000);
         }),
         catchError(this.handleError)
       );
   }
 
-  private ensureTokenValid(): Observable<void|null> {
-   
-    if (!this.token || Date.now() > this.tokenExpirationTime) {
-      return this.authenticate();
+  private ensureClientTokenValid(): Observable<void | null> {
+    if (!this.clientToken || Date.now() > this.clientTokenExpirationTime) {
+      return this.authenticateClient();
     }
-
     return of(null);
   }
 
-  search(query: string, type: string = 'track,artist,album'): Observable<any> {
-    return this.ensureTokenValid().pipe(
-      switchMap(() => {
-        
-        const params = new HttpParams()
-          .set('q', query)
-          .set('type', type);
+  private ensureUserTokenValid(): Observable<void | null> {
+    return this.authService.getTokenObservable().pipe(
+      switchMap(token => {
+        if (!token) {
+          return throwError(() => new Error('User token is invalid or expired.'));
+        }
+        this.userToken = token;
+        return of(null);
+      })
+    );
+  }
 
-        return this.http.get<Songs>('https://api.spotify.com/v1/search', { headers: this.getHeaders(), params });
+  private ensureTokenValid(user: boolean): Observable<void | null> {
+    return user ? this.ensureUserTokenValid() : this.ensureClientTokenValid();
+  }
+
+  search(query: string, type: string = 'track,artist,album', user: boolean = false): Observable<any> {
+    return this.ensureTokenValid(user).pipe(
+      switchMap(() => {
+        const params = new HttpParams().set('q', query).set('type', type);
+        const headers = user ? this.getUserHeaders() : this.getClientHeaders();
+        return this.http.get<Songs>('https://api.spotify.com/v1/search', { headers, params });
       }),
       catchError(this.handleError)
     );
   }
 
-  getDetails(type: string, id: string): Observable<any> {
-    return this.ensureTokenValid().pipe(
+  getDetails(type: string, id: string, user: boolean = false): Observable<any> {
+    return this.ensureTokenValid(user).pipe(
       switchMap(() => {
-        return this.http.get(`https://api.spotify.com/v1/${type}s/${id}`, { headers: this.getHeaders() });
+        const headers = user ? this.getUserHeaders() : this.getClientHeaders();
+        return this.http.get(`https://api.spotify.com/v1/${type}s/${id}`, { headers });
       }),
       catchError(this.handleError)
     );
@@ -77,5 +95,13 @@ export class SpotifyService {
   private handleError(error: any) {
     console.error('An error occurred:', error);
     return throwError(() => new Error('Something bad happened; please try again later.'));
+  }
+  getUserProfile(): Observable<any> {
+    return this.ensureTokenValid(true).pipe(
+      switchMap(() => {
+        return this.http.get('https://api.spotify.com/v1/me', { headers: this.getUserHeaders() });
+      }),
+      catchError(this.handleError)
+    );
   }
 }
