@@ -83,7 +83,7 @@ export class HomeComponent implements OnDestroy  {
     this.paginatedResults = this.results.slice(startIndex, endIndex);
   }
   private processSearchResults(response: any): SearchResult[] {
-    // Procesa y combina los resultados de tracks, artists y albums
+    
     const tracks = response.tracks?.items || [];
     const artists = response.artists?.items || [];
     const albums = response.albums?.items || [];
@@ -92,7 +92,7 @@ export class HomeComponent implements OnDestroy  {
       id: item.id,
       type: item.type,
       name: item.name,
-      // Mapea más propiedades según necesites
+  
     }));
   }
 
