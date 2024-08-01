@@ -41,7 +41,7 @@ interface SearchResult {
   
   
 })
-export class HomeComponent implements OnDestroy , OnInit {
+export class HomeComponent implements OnDestroy  {
   searchQuery = '';
   results: SearchResult[] = [];
   isLoading = false;
@@ -52,10 +52,7 @@ export class HomeComponent implements OnDestroy , OnInit {
   constructor(private spotifyService: SpotifyService, private router: Router, private authService: AuthService) { 
 
   }
-  ngOnInit(): void {
-
-    this.paginatedResults = this.results.slice(0, this.pageSize);
-  }
+ 
   login() {
     
     this.authService.login();
