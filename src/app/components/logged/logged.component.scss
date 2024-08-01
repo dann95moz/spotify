@@ -20,3 +20,8 @@
   display: flex;
   flex-direction: column;
 }
+.searched-list {
+  background-color: #1c1c1c;
+  max-height: 40vh;
+  overflow-y: auto;
+}
