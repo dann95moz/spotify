@@ -39,24 +39,5 @@ export class DetailsComponent {
     this.router.navigate(['/']);
   }
 
-  playPreview(): void {
-    if (this.audio?.nativeElement) {
-      this.audio.nativeElement.play();
-    }
-  }
-
-  playAudio(): void {
-    this.audio?.nativeElement.play();
-  }
-
-  pauseAudio(): void {
-    this.audio?.nativeElement.pause();
-  }
-
-  setVolume(event: any): void {
-    const volume = event.target.value;
-    if (this.audio?.nativeElement) {
-      this.audio.nativeElement.volume = volume;
-    }
-  }
+ 
 }
