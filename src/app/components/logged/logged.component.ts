@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { PlayerComponent } from '../player/player.component';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { SpotifyService } from '../../services/api/spotify.service';
 import { FormsModule } from '@angular/forms';
@@ -15,20 +14,30 @@ import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-logged',
   standalone: true,
-  imports: [MatFormField, FormsModule, MatFormFieldModule, MatInputModule,AsyncPipe, MatListModule,MatCardModule, MatIcon, MatButtonModule],
+  imports: [
+    MatFormField,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    AsyncPipe,
+    MatListModule,
+    MatCardModule,
+    MatIcon,
+    MatButtonModule,
+  ],
   templateUrl: './logged.component.html',
-  styleUrl: './logged.component.scss'
+  styleUrl: './logged.component.scss',
 })
-export class LoggedComponent implements OnInit{
+export class LoggedComponent implements OnInit {
   searchQuery: string = '';
   searchResults: any;
   isLoading: boolean = false;
   userProfile: any;
-  playlists$: Observable<Item[]>
+  playlists$: Observable<Item[]>;
   constructor(private spotifyService: SpotifyService) {
     this.playlists$ = this.spotifyService.getUserPlaylists().pipe(
       map((listObject) => {
-        return listObject.items
+        return listObject.items;
       })
     );
   }
@@ -39,27 +48,26 @@ export class LoggedComponent implements OnInit{
   loadUserProfile() {
     this.spotifyService.getUserProfile().subscribe({
       next: (profile: User) => {
-      
-        
         this.userProfile = profile;
       },
       error: (error) => {
         console.error('Error loading user profile:', error);
-      }
+      },
     });
   }
   onSearch() {
     this.isLoading = true;
-    this.spotifyService.search(this.searchQuery, 'track,artist,album', true).subscribe({
-      next: (results) => {
-        this.searchResults = results;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Search error:', error);
-        this.isLoading = false;
-      }
-    });
+    this.spotifyService
+      .search(this.searchQuery, 'track,artist,album', true)
+      .subscribe({
+        next: (results) => {
+          this.searchResults = results;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Search error:', error);
+          this.isLoading = false;
+        },
+      });
   }
 }
-

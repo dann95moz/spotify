@@ -9,12 +9,14 @@ import { AuthService } from '../../services/spotifyAuth/auth.service';
   template: '<p>Loading...</p>',
 })
 export class CallbackComponent implements OnInit {
-  constructor(private route: ActivatedRoute, private authService: AuthService,private router:Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-   
-   this.authService.handleCallback();
+    this.route.queryParams.subscribe((_) => {
+      this.authService.handleCallback();
     });
   }
 }
