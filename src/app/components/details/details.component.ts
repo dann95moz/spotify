@@ -22,7 +22,6 @@ type SpotifyItem = AlbumElement | ArtistsItem | TracksItem;
 })
 export class DetailsComponent {
   details$: Observable<SpotifyItem>;
-  @ViewChild('audio') audio!: ElementRef<HTMLAudioElement>;
 
   constructor(
     private route: ActivatedRoute,
