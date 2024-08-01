@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class AuthService {
   private scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
   private tokenKey = 'spotify_token';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   login() {
     const authUrl = `${this.authEndpoint}?client_id=${this.clientId}&response_type=code&redirect_uri=${encodeURIComponent(this.redirectUri)}&scope=${encodeURIComponent(this.scopes)}`;
@@ -51,7 +52,7 @@ export class AuthService {
         next: (response) => {
           const token = response.access_token;
           this.saveToken(token);
-          window.location.href = '/logged';
+          this.router.navigate(['/logged']);
         },
         error: (error) => {
           console.error('Error al obtener el token', error);
