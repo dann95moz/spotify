@@ -101,7 +101,7 @@ export class SpotifyService {
   getUserProfile(): Observable<any> {
     return this.ensureTokenValid(true).pipe(
       switchMap(() => {
-        return this.http.get(this.userUri, { headers: this.getUserHeaders() }).pipe(tap(console.log));
+        return this.http.get(this.userUri, { headers: this.getUserHeaders() });
       }),
       catchError(this.handleError)
     );
