@@ -49,7 +49,7 @@ export class HomeComponent implements OnDestroy , OnInit {
   paginatedResults: any[] = [];
 
   pageSize = 5;
-  constructor(private spotifyService: SpotifyService, private router: Router, private authService: AuthService,private playerService:PlayerService) { 
+  constructor(private spotifyService: SpotifyService, private router: Router, private authService: AuthService) { 
 
   }
   ngOnInit(): void {
