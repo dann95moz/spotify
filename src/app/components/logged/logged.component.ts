@@ -12,6 +12,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { PlayerService } from '../../services/player/player.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-logged',
   standalone: true,
@@ -35,35 +36,26 @@ export class LoggedComponent implements OnInit {
   isLoading: boolean = false;
   userProfile: any;
   playlists$: Observable<Item[]>;
-  constructor(private spotifyService: SpotifyService,private playerService: PlayerService) {
+  constructor(private spotifyService: SpotifyService,private router:Router) {
  
     this.playlists$ = this.spotifyService.getUserPlaylists().pipe(
       map((listObject) => {
         return listObject.items;
       })
     );
+    
   }
 
   ngOnInit(): void {
     this.loadUserProfile();
-    this.playerService.initializePlayer()
-  
-  }
-  play() {
-    this.playerService.play();
 
-  }
-
-  pause() {
-   console.log(localStorage.getItem('spotify_token'));
     
-    this.playerService.pause();
   }
 
-  setVolume(event: any) {
-    const volume = event.target.value;
-    this.playerService.setVolume(volume);
+  goToPlaylistDetails(playlistId:string) {
+    this.router.navigate([`/logged/playlist/`, playlistId]);
   }
+ 
   loadUserProfile() {
     this.spotifyService.getUserProfile().subscribe({
       next: (profile: User) => {

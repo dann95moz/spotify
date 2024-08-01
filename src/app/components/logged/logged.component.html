@@ -16,17 +16,7 @@
       <mat-icon>search</mat-icon>
     </button>
   </form>
-  <div>
-    <button (click)="play()">Play</button>
-    <button (click)="pause()">Pause</button>
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step="0.01"
-      (input)="setVolume($event)"
-    />
-  </div>
+
   <div class="lists">
     @if(searchResults) {
 
@@ -46,15 +36,21 @@
     <h3>Listas de reproducción</h3>
     <div class="play-list-collection">
       @if ((playlists$ | async ); as lists ) { @for(list of lists; track list){
-      <div class="playlist">
-        <h3>{{ list.name }}</h3>
-        <img
-          [src]="list.images[0].url"
-          alt="{{ list.images[0].height }}"
-          height=" 300px "
-        />
-        <p>{{ list.tracks.total }} canciones</p>
-      </div>
+      <mat-card
+        appearance="outlined"
+        class="playlist"
+        (click)="goToPlaylistDetails(list.id)"
+      >
+        <mat-card-content>
+          <h3>{{ list.name }}</h3>
+          <img
+            [src]="list.images[0].url"
+            alt="{{ list.images[0].height }}"
+            height=" 300px "
+          />
+          <p>{{ list.tracks.total }} canciones</p>
+        </mat-card-content>
+      </mat-card>
       } } @else {
       <p>cargando listas de reproduccion</p>
       }

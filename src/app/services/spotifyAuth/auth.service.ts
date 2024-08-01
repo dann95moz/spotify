@@ -12,7 +12,7 @@ export class AuthService {
   private redirectUri = 'http://localhost:4200/callback';
   private authEndpoint = 'https://accounts.spotify.com/authorize';
   private tokenEndpoint = 'https://accounts.spotify.com/api/token';
-  private scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing streaming user-read-email user-read-private';
+  private scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing streaming user-read-email user-read-private playlist-read-private playlist-read-collaborative';
   private tokenKey = 'spotify_token';
 
   constructor(private http: HttpClient, private router: Router) {}

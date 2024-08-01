@@ -6,6 +6,7 @@ import { TokenResponse } from './token.interface';
 import { SpotifySearch } from './search.interface';
 import { AuthService } from '../spotifyAuth/auth.service';
 import { PlayList } from './playList.interface';
+import { PrivatePlayList } from './privatePlayList';
 
 @Injectable({
   providedIn: 'root',
@@ -117,5 +118,7 @@ export class SpotifyService {
  
 
   }
+  getPlaylistDetails(playlistId: string): Observable<PrivatePlayList> {
+    return this.http.get(`${this.apiUrl}/playlists/${playlistId}`, { headers: this.getUserHeaders() }).pipe(tap(console.log));  }
   
 }
