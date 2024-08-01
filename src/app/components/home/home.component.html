@@ -29,26 +29,26 @@
 
   <mat-paginator
     [length]="results.length"
-    [pageSize]="5"
+    [pageSize]="pageSize"
     [pageSizeOptions]="[5, 10, 25, 100]"
     aria-label="Select page"
     (page)="onPageChange($event)"
   >
   </mat-paginator>
   } @if (!isLoading && results.length) {
-  <div class="results">
-    <mat-card appearance="outlined" class="list">
-      <mat-card-content>
-        <mat-list>
-          @for (item of paginatedResults; track item) {
-          <mat-list-item (click)="viewDetails(item)" class="list-item">
-            <p>{{ item.name }} ({{ item.type }})</p>
-          </mat-list-item>
-          }
-        </mat-list>
-      </mat-card-content>
-    </mat-card>
-  </div>
+
+  <mat-card appearance="outlined" class="list">
+    <mat-card-content>
+      <mat-list>
+        @for (item of paginatedResults; track item.id) {
+        <mat-list-item (click)="viewDetails(item)" class="list-item">
+          <p>{{ item.name }} ({{ item.type }})</p>
+        </mat-list-item>
+        }
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+
   } @if (!isLoading && !results.length ) {
   <p>No se encontraron resultados.</p>
   }

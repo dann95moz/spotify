@@ -4,10 +4,7 @@
   min-width: 30vw;
   gap: 2rem;
 }
-.results {
-  max-height: 30vh;
-  overflow-y: auto;
-}
+
 mat-form-field {
   width: 100%;
 }
@@ -23,6 +20,8 @@ mat-form-field {
 }
 .list {
   background-color: #1c1c1c;
+  max-height: 32vh;
+  overflow-y: auto;
 }
 .list-item {
   color: white;

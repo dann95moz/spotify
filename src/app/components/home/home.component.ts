@@ -46,13 +46,14 @@ export class HomeComponent implements OnDestroy , OnInit {
   isLoading = false;
   private destroy$ = new Subject<void>();
   paginatedResults: any[] = [];
-  pages:number=20
+
+  pageSize = 5;
   constructor(private spotifyService: SpotifyService, private router: Router, private authService: AuthService,private playerService:PlayerService) { 
 
   }
   ngOnInit(): void {
 
-    this.paginatedResults = this.results.slice(0, this.pages);
+    this.paginatedResults = this.results.slice(0, this.pageSize);
   }
   login() {
     
@@ -68,6 +69,7 @@ export class HomeComponent implements OnDestroy , OnInit {
       .subscribe({
         next: (response) => {
           this.results = this.processSearchResults(response);
+          this.paginatedResults = this.results.slice(0, this.pageSize);
           this.isLoading = false;
         },
         error: (error) => {
