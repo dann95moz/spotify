@@ -11,6 +11,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { PlayerService } from '../../services/player/player.service';
 @Component({
   selector: 'app-logged',
   standalone: true,
@@ -34,7 +35,8 @@ export class LoggedComponent implements OnInit {
   isLoading: boolean = false;
   userProfile: any;
   playlists$: Observable<Item[]>;
-  constructor(private spotifyService: SpotifyService) {
+  constructor(private spotifyService: SpotifyService,private playerService: PlayerService) {
+ 
     this.playlists$ = this.spotifyService.getUserPlaylists().pipe(
       map((listObject) => {
         return listObject.items;
@@ -44,6 +46,23 @@ export class LoggedComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserProfile();
+    this.playerService.initializePlayer()
+  
+  }
+  play() {
+    this.playerService.play();
+
+  }
+
+  pause() {
+   console.log(localStorage.getItem('spotify_token'));
+    
+    this.playerService.pause();
+  }
+
+  setVolume(event: any) {
+    const volume = event.target.value;
+    this.playerService.setVolume(volume);
   }
   loadUserProfile() {
     this.spotifyService.getUserProfile().subscribe({
