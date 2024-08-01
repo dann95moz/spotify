@@ -110,7 +110,7 @@ export class SpotifyService {
 
     return this.ensureTokenValid(true).pipe(
       switchMap(() => {
-        return this.http.get<PlayList>(`${this.apiUrl}/me/playlists`, { headers: this.getUserHeaders() }).pipe(tap(console.log))      }),
+        return this.http.get<PlayList>(`${this.apiUrl}/me/playlists`, { headers: this.getUserHeaders() })}),
       catchError(this.handleError)
     );
 
