@@ -31,7 +31,7 @@ export class DetailsComponent {
   ) {
     this.details$ = this.route.params.pipe(
       switchMap(params => this.spotifyService.getDetails(params['type'], params['id'])),
-      tap(console.log)
+      
     )
   }
 

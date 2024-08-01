@@ -18,10 +18,9 @@ export class PlayerComponent implements AfterViewInit {
   }
 
   play() {
-    console.log('click');
+   
     
     this.playerService.player?.play().then(() => {
-      console.log('Playback started');
     }).catch((error:any) => {
       console.error('Error starting playback', error);
     });

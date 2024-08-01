@@ -13,7 +13,7 @@ export class CallbackComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-   console.log('callback params',params);
+   
    this.authService.handleCallback();
     });
   }

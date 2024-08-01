@@ -39,7 +39,7 @@ export class LoggedComponent implements OnInit{
   loadUserProfile() {
     this.spotifyService.getUserProfile().subscribe({
       next: (profile: User) => {
-        console.log(profile);
+      
         
         this.userProfile = profile;
       },
