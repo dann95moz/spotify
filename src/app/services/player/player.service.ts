@@ -39,35 +39,30 @@ export class PlayerService {
       });
 
       this.player.addListener('not_ready', ({ device_id }: { device_id: string }) => {
-        console.log('Device ID has gone offline', device_id);
         this.deviceId = undefined;
       });
 
       this.player.connect().then((success: boolean) => {
-        if (success) {
-          console.log('The Spotify Player has connected successfully.');
-        } else {
+        if (!success) {
           console.error('The Spotify Player failed to connect.');
-        }
+        } 
       });
     };
   }
 
   play(): void {
     this.player?.resume().then(() => {
-      console.log('Playback resumed');
     }).catch(this.handleError);
   }
 
   pause(): void {
     this.player?.pause().then(() => {
-      console.log('Playback paused');
     }).catch(this.handleError);
   }
 
   setVolume(volume: number): void {
     this.player?.setVolume(volume).then(() => {
-      console.log(`Volume set to ${volume}`);
+    
     }).catch(this.handleError);
   }
 

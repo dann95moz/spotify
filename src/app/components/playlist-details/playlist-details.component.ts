@@ -4,19 +4,20 @@ import { Observable, switchMap } from 'rxjs';
 import { PrivatePlayList } from '../../services/api/privatePlayList';
 import { ActivatedRoute } from '@angular/router';
 import { SpotifyService } from '../../services/api/spotify.service';
-import { AsyncPipe, JsonPipe } from '@angular/common';
-
+import { AsyncPipe } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import {MatSliderChange, MatSliderModule} from '@angular/material/slider';
 @Component({
   selector: 'app-playlist-details',
   standalone: true,
-  imports: [AsyncPipe, JsonPipe],
+  imports: [AsyncPipe, MatButtonModule, MatSliderModule],
   templateUrl: './playlist-details.component.html',
   styleUrls: ['./playlist-details.component.scss']
 })
 export class PlaylistDetailsComponent implements OnInit {
   playListDetails$: Observable<PrivatePlayList>;
   deviceId?: string;
-
+  currentVolume: number = 0.5;
   constructor(
     private playerService: PlayerService,
     private route: ActivatedRoute,
@@ -58,9 +59,14 @@ export class PlaylistDetailsComponent implements OnInit {
     this.playerService.pause();
   }
 
-  setVolume(event: any) {
-    const volume = event.target.value;
-    this.playerService.setVolume(volume);
+  setVolume(event: Event) {
+  
+    
+    const target = event.target as HTMLInputElement;
+    console.log(target.value);
+    const volume = parseFloat(target.value)/100;
+    console.log('Volume set to:', volume);
+    this.playerService.setVolume(volume); 
   }
 
   playTrack(trackUri: string) {

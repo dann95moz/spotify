@@ -1,7 +1,29 @@
 @if(playListDetails$|async ;as playlists) {
-<div>{{ playlists.name }}</div>
+<div class="album-info">
+  <h3>{{ playlists.name }}</h3>
+  <img
+    [src]="playlists.images[0].url"
+    alt="{{ playlists.name }}"
+    [height]="playlists.images[0].height"
+    [width]="playlists.images[0].width"
+  />
+
+  <div class="controls">
+    <button mat-raised-button (click)="playPlaylist()">
+      Reproducir Playlist ✨
+    </button>
+    <button mat-raised-button (click)="play()">Play</button>
+    <button mat-raised-button (click)="pause()">Pause</button>
+    <mat-slider>
+      <input
+        matSliderThumb
+        min="0"
+        max="1"
+        step="0.01"
+        (input)="setVolume($event)"
+        [value]="currentVolume"
+      />
+    </mat-slider>
+  </div>
+</div>
 }
-<button (click)="playPlaylist()">Playlist</button>
-<button (click)="play()">Play</button>
-<button (click)="pause()">Pause</button>
-<input type="range" min="0" max="1" step="0.01" (input)="setVolume($event)" />
