@@ -1,137 +1,154 @@
-// src/app/services/player.service.ts
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { AuthService } from '../spotifyAuth/auth.service';
+import { SpotifyService } from '../api/spotify.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PlayerService {
-  player: any;
-  playerReady: Promise<void> | null = null;
+  private player: any;  // Tipo 'any' para evitar problemas con el espacio de nombres
+  private deviceId: string | undefined;
 
-  constructor() {}
+  constructor(private authService: AuthService, private http: HttpClient, private spotifyService: SpotifyService) {
+    this.initializePlayer();  // Inicializar el reproductor aquí
+  }
 
-  initializePlayer(): Promise<void> {
-    if (!this.playerReady) {
-      this.playerReady = this.loadSpotifySdk().then(() => {
-        return new Promise<void>((resolve, reject) => {
-          const token = localStorage.getItem('spotify_token');
-          if (!token) {
-            console.error('No token found in localStorage');
-            reject('No token found in localStorage');
-            return;
+  public initializePlayer(): void {
+    (window as any).onSpotifyWebPlaybackSDKReady = () => {
+      const token = this.authService.getTokenFromStorage(); // Obtén el token de acceso de manera segura
+
+      this.player = new (window as any).Spotify.Player({
+        name: 'Angular Spotify Player',
+        getOAuthToken: (cb: (token: string) => void) => {
+          const token = this.authService.getTokenFromStorage(); // Obtén el token de acceso de manera segura
+          if (token) {
+            cb(token);
+          } else {
+            console.error('No token available');
           }
-
-          this.player = new window.Spotify.Player({
-            name: 'Web Playback SDK Quick Start Player',
-            getOAuthToken: (cb: any) => {
-              cb(token);
-            },
-            volume: 0.5,
-          });
-
-          this.player.addListener('ready', ({ device_id }: { device_id: string }) => {
-            console.log('Ready with Device ID', device_id);
-            resolve();
-          });
-
-          this.player.addListener('not_ready', ({ device_id }: { device_id: string }) => {
-            console.log('Device ID has gone offline', device_id);
-          });
-
-          this.player.addListener('initialization_error', (e: any) => {
-            console.error('Initialization error:', e);
-            reject(e);
-          });
-
-          this.player.addListener('authentication_error', (e: any) => {
-            console.error('Authentication error:', e);
-            reject(e);
-          });
-
-          this.player.addListener('account_error', (e: any) => {
-            console.error('Account error:', e);
-            reject(e);
-          });
-
-          this.player.addListener('playback_error', (e: any) => {
-            console.error('Playback error:', e);
-            reject(e);
-          });
-
-          this.player.connect().then((success: boolean) => {
-            if (success) {
-              console.log('Player connected successfully');
-            } else {
-              console.error('Failed to connect player');
-              reject('Failed to connect player');
-            }
-          });
-        });
-      }).catch((error) => {
-        console.error('Error loading Spotify SDK:', error);
-        this.playerReady = null; // Reset playerReady on error
-        throw error;
+        },
+        volume: 0.5,
       });
+
+      this.player.addListener('ready', ({ device_id }: { device_id: string }) => {
+        console.log('Ready with Device ID in service', device_id);
+        this.deviceId = device_id;
+      });
+
+      this.player.addListener('not_ready', ({ device_id }: { device_id: string }) => {
+        console.log('Device ID has gone offline', device_id);
+        this.deviceId = undefined;
+      });
+
+      this.player.connect().then((success: boolean) => {
+        if (success) {
+          console.log('The Spotify Player has connected successfully.');
+        } else {
+          console.error('The Spotify Player failed to connect.');
+        }
+      });
+    };
+  }
+
+  play(): void {
+    this.player?.resume().then(() => {
+      console.log('Playback resumed');
+    }).catch(this.handleError);
+  }
+
+  pause(): void {
+    this.player?.pause().then(() => {
+      console.log('Playback paused');
+    }).catch(this.handleError);
+  }
+
+  setVolume(volume: number): void {
+    this.player?.setVolume(volume).then(() => {
+      console.log(`Volume set to ${volume}`);
+    }).catch(this.handleError);
+  }
+
+  playPlaylist(playlistUri: string): Observable<void> {
+    if (!this.deviceId) {
+      return throwError(() => new Error('No device ID available.'));
+    }
+  
+    return this.authService.getTokenObservable().pipe(
+      switchMap((token: string | null) => {
+        if (!token) {
+          return throwError(() => new Error('User token is invalid or expired.'));
+        }
+  
+        const body = {
+          context_uri: playlistUri
+        };
+  
+        return this.http.put<void>(
+          `https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`,
+          body,
+          {
+            headers: new HttpHeaders({
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            }),
+          }
+        ).pipe(
+          catchError((error) => {
+            console.error('Error playing playlist:', error);
+            return throwError(() => new Error('Failed to play playlist.'));
+          })
+        );
+      })
+    );
+  }
+  
+
+  setDeviceId(deviceId: string) {
+    this.deviceId = deviceId;
+  }
+
+  getDeviceId() {
+    return this.deviceId;
+  }
+
+  private handleError(error: any) {
+    console.error('An error occurred:', error);
+    return throwError(() => new Error('Something bad happened; please try again later.'));
+  }
+
+  playTrack(trackUri: string): Observable<void> {
+    console.log(this.deviceId);
+    
+    if (!this.deviceId) {
+      return throwError(() => new Error('No device ID available.'));
     }
 
-    return this.playerReady;
-  }
+    return this.authService.getTokenObservable().pipe(
+      switchMap((token) => {
+        if (!token) {
+          return throwError(() => new Error('User token is invalid or expired.'));
+        }
 
-  private loadSpotifySdk(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      if (window.Spotify) {
-        resolve();
-      } else {
-        const script = document.createElement('script');
-        script.src = 'https://sdk.scdn.co/spotify-player.js';
-        script.onload = () => {
-          if (window.Spotify) {
-            resolve();
-          } else {
-            reject('Spotify SDK failed to load');
+        return this.http.put(
+          'https://api.spotify.com/v1/me/player/play',
+          { uris: [trackUri] },
+          {
+            headers: new HttpHeaders({
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            }),
           }
-        };
-        script.onerror = () => {
-          reject('Spotify SDK failed to load');
-        };
-        document.head.appendChild(script);
-      }
-    });
-  }
-
-  play() {
-    this.initializePlayer().then(() => {
-      this.player.resume().then(() => {
-        console.log('Playback resumed');
-      }).catch((error: any) => {
-        console.error('Error resuming playback:', error);
-      });
-    }).catch((error: any) => {
-      console.error('Player not ready:', error);
-    });
-  }
-
-  pause() {
-    this.initializePlayer().then(() => {
-      this.player.pause().then(() => {
-        console.log('Playback paused');
-      }).catch((error: any) => {
-        console.error('Error pausing playback:', error);
-      });
-    }).catch((error: any) => {
-      console.error('Player not ready:', error);
-    });
-  }
-
-  setVolume(volume: number) {
-    this.initializePlayer().then(() => {
-      this.player.setVolume(volume).then(() => {
-        console.log(`Volume set to ${volume}`);
-      }).catch((error: any) => {
-        console.error('Error setting volume:', error);
-      });
-    }).catch((error: any) => {
-      console.error('Player not ready:', error);
-    });
+        ).pipe(
+          switchMap(() => of(void 0)),  // Convert observable to void
+          catchError((error) => {
+            console.error('Error playing track:', error);
+            return throwError(() => new Error('Failed to play track.'));
+          })
+        );
+      })
+    );
   }
 }

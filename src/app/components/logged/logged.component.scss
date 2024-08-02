@@ -19,7 +19,7 @@
 .playlist {
   display: flex;
   flex-direction: column;
-  & ::hover {
+  &:hover {
     cursor: pointer;
   }
 }
@@ -27,4 +27,7 @@
   background-color: #1c1c1c;
   max-height: 40vh;
   overflow-y: auto;
+}
+.lists {
+  height: 30vh;
 }

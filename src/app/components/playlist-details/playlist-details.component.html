@@ -1,3 +1,7 @@
+@if(playListDetails$|async ;as playlists) {
+<div>{{ playlists.name }}</div>
+}
+<button (click)="playPlaylist()">Playlist</button>
 <button (click)="play()">Play</button>
 <button (click)="pause()">Pause</button>
 <input type="range" min="0" max="1" step="0.01" (input)="setVolume($event)" />

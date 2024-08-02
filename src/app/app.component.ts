@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { PlayerService } from './services/player/player.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,10 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  
+export class AppComponent implements OnInit{
+  constructor(private playerService: PlayerService) { }
+  ngOnInit(): void {
+    // Inicializa el reproductor cuando se cargue el componente principal
+    this.playerService.initializePlayer();
+  }
 }

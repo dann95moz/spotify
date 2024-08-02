@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { AuthService } from '../spotifyAuth/auth.service';
 import { TokenResponse } from './token.interface';
 import { SpotifySearch } from './search.interface';
-import { AuthService } from '../spotifyAuth/auth.service';
 import { PlayList } from './playList.interface';
 import { PrivatePlayList } from './privatePlayList';
 
 @Injectable({
   providedIn: 'root',
-  deps: [HttpClient],
 })
 export class SpotifyService {
-  public clientId = '1a4cabadab9a4d96ac5356d3f92b23fe';
-  public clientSecret = '04c669a207c748eca6dc7f72f3a18414';
-  private clientToken: string = '';
-  private clientTokenExpirationTime: number = 0;
+  private clientId = '1a4cabadab9a4d96ac5356d3f92b23fe';
+  private clientSecret = '04c669a207c748eca6dc7f72f3a18414';
+  private clientToken = '';
+  private clientTokenExpirationTime = 0;
   private userToken: string | null = null;
   private apiUrl = 'https://api.spotify.com/v1';
-  private userUri = 'https://api.spotify.com/v1/me'
+  private userUri = 'https://api.spotify.com/v1/me';
+
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   private getClientHeaders(): HttpHeaders {
@@ -89,16 +89,12 @@ export class SpotifyService {
     return this.ensureTokenValid(user).pipe(
       switchMap(() => {
         const headers = user ? this.getUserHeaders() : this.getClientHeaders();
-        return this.http.get(`https://api.spotify.com/v1/${type}s/${id}`, { headers });
+        return this.http.get(`${this.apiUrl}/${type}s/${id}`, { headers });
       }),
       catchError(this.handleError)
     );
   }
 
-  private handleError(error: any) {
-    console.error('An error occurred:', error);
-    return throwError(() => new Error('Something bad happened; please try again later.'));
-  }
   getUserProfile(): Observable<any> {
     return this.ensureTokenValid(true).pipe(
       switchMap(() => {
@@ -107,18 +103,27 @@ export class SpotifyService {
       catchError(this.handleError)
     );
   }
-  getUserPlaylists(): Observable<PlayList> {
 
+  getUserPlaylists(): Observable<PlayList> {
     return this.ensureTokenValid(true).pipe(
       switchMap(() => {
-        return this.http.get<PlayList>(`${this.apiUrl}/me/playlists`, { headers: this.getUserHeaders() })}),
+        return this.http.get<PlayList>(`${this.apiUrl}/me/playlists`, { headers: this.getUserHeaders() });
+      }),
       catchError(this.handleError)
     );
-
- 
-
   }
+
   getPlaylistDetails(playlistId: string): Observable<PrivatePlayList> {
-    return this.http.get(`${this.apiUrl}/playlists/${playlistId}`, { headers: this.getUserHeaders() }).pipe(tap(console.log));  }
-  
+    return this.ensureTokenValid(true).pipe(
+      switchMap(() => {
+        return this.http.get<PrivatePlayList>(`${this.apiUrl}/playlists/${playlistId}`, { headers: this.getUserHeaders() });
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  public handleError(error: any) {
+    console.error('An error occurred:', error);
+    return throwError(() => new Error('Something bad happened; please try again later.'));
+  }
 }
