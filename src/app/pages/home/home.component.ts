@@ -14,6 +14,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { SpotifySearch } from '../../services/api/search.interface';
+import { SearchSongFormComponent } from '../../components/searchSongForm/search-song-form/search-song-form.component';
 interface SearchResult {
   id: string;
   type: string;
@@ -35,6 +36,7 @@ interface SearchResult {
     MatIcon,
     MatCardModule,
     MatPaginatorModule,
+    SearchSongFormComponent,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],

@@ -6,13 +6,13 @@ import { ActivatedRoute } from '@angular/router';
 import { SpotifyService } from '../../services/api/spotify.service';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import {MatSliderChange, MatSliderModule} from '@angular/material/slider';
+import { MatSliderModule } from '@angular/material/slider';
 @Component({
   selector: 'app-playlist-details',
   standalone: true,
   imports: [AsyncPipe, MatButtonModule, MatSliderModule],
   templateUrl: './playlist-details.component.html',
-  styleUrls: ['./playlist-details.component.scss']
+  styleUrls: ['./playlist-details.component.scss'],
 })
 export class PlaylistDetailsComponent implements OnInit {
   playListDetails$: Observable<PrivatePlayList>;
@@ -24,14 +24,14 @@ export class PlaylistDetailsComponent implements OnInit {
     private spotifyService: SpotifyService
   ) {
     this.playListDetails$ = this.route.params.pipe(
-      switchMap(params => this.spotifyService.getPlaylistDetails(params['playlistId']))
+      switchMap((params) =>
+        this.spotifyService.getPlaylistDetails(params['playlistId'])
+      )
     );
   }
 
   ngOnInit(): void {
-    
-      this.deviceId = this.playerService.getDeviceId();
-   
+    this.deviceId = this.playerService.getDeviceId();
   }
 
   playPlaylist() {
@@ -40,15 +40,17 @@ export class PlaylistDetailsComponent implements OnInit {
       return;
     }
 
-    this.route.params.pipe(
-      switchMap(params => {
-        const playlistUri = `spotify:playlist:${params['playlistId']}`;
-        return this.playerService.playPlaylist(playlistUri);
-      })
-    ).subscribe({
-      next: () => console.log('Playlist is playing'),
-      error: (err) => console.error('Error playing playlist:', err)
-    });
+    this.route.params
+      .pipe(
+        switchMap((params) => {
+          const playlistUri = `spotify:playlist:${params['playlistId']}`;
+          return this.playerService.playPlaylist(playlistUri);
+        })
+      )
+      .subscribe({
+        next: () => console.log('Playlist is playing'),
+        error: (err) => console.error('Error playing playlist:', err),
+      });
   }
 
   play() {
@@ -60,17 +62,14 @@ export class PlaylistDetailsComponent implements OnInit {
   }
 
   setVolume(event: Event) {
-  
-    
     const target = event.target as HTMLInputElement;
     console.log(target.value);
-    const volume = parseFloat(target.value)/100;
+    const volume = parseFloat(target.value) / 100;
     console.log('Volume set to:', volume);
-    this.playerService.setVolume(volume); 
+    this.playerService.setVolume(volume);
   }
 
   playTrack(trackUri: string) {
     this.playerService.playTrack(trackUri);
-    
   }
 }
