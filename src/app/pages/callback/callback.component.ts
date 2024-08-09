@@ -1,7 +1,7 @@
 // src/app/components/callback/callback.component.ts
 
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/spotifyAuth/auth.service';
 
 @Component({
@@ -18,5 +18,6 @@ export class CallbackComponent implements OnInit {
     this.route.queryParams.subscribe((_) => {
       this.authService.handleCallback();
     });
+    //TODO: Remove this component
   }
 }

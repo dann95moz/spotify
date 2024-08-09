@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -7,16 +7,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { finalize, Observable, Subject, takeUntil, tap } from 'rxjs';
-import { SpotifyService } from '../../services/api/spotify.service';
-import { AuthService } from '../../services/spotifyAuth/auth.service';
+import { finalize, Observable, tap } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { SpotifySearch } from '../../services/api/search.interface';
-import { SearchSongFormComponent } from '../../components/searchSongForm/search-song-form/search-song-form.component';
 import { AsyncPipe } from '@angular/common';
-import { LoginBtnComponent } from '../../components/loginBtn/login-btn/login-btn.component';
+import { LoginBtnComponent } from '@components/login-btn/login-btn.component';
+import { SearchSongFormComponent } from '@components/searchSongForm/search-song-form.component';
 interface SearchResult {
   id: string;
   type: string;

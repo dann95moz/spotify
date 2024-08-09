@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../../services/spotifyAuth/auth.service';
+import { AuthService } from '../../services/spotifyAuth/auth.service';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({

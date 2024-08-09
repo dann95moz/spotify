@@ -1,14 +1,13 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component} from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
-import { Observable, switchMap, tap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Observable, switchMap } from 'rxjs';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { SpotifyService } from '../../services/api/spotify.service';
-import { AlbumElement, ArtistsItem, TracksItem } from '../../services/api/search.interface';
+import { SpotifyService } from '@services/api/spotify.service';
+import { AlbumElement, ArtistsItem, TracksItem } from '@services/api/search.interface';
 import { MatCardModule } from '@angular/material/card';
 
 type SpotifyItem = AlbumElement | ArtistsItem | TracksItem;

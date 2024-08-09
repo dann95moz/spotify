@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
-import { SpotifyService } from '../../services/api/spotify.service';
-import { FormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { User } from '../../services/api/user.interface';
 import { map, Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
-import { Item } from '../../services/api/playList.interface';
+import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { PlayerService } from '../../services/player/player.service';
-import { Router } from '@angular/router';
+import { SpotifyService } from '@services/api/spotify.service';
+import { User } from '@services/api/user.interface';
+import { Item } from '@services/api/playList.interface';
 @Component({
   selector: 'app-logged',
   standalone: true,

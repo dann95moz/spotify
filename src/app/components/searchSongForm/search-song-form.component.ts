@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { SpotifyService } from '../../../services/api/spotify.service';
-import { catchError, Observable, of, map, tap } from 'rxjs';
-import { SpotifySearch } from '../../../services/api/search.interface';
+import { SpotifyService } from '../../services/api/spotify.service';
+import {  Observable, map } from 'rxjs';
+import { SpotifySearch } from '@services/api/search.interface';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -35,10 +35,7 @@ export class SearchSongFormComponent {
   
     const searchResults$ = this.spotifyService.search(searchQuery).pipe(
       map((response) => this.processSearchResults(response)),
-      tap(console.log),
-      catchError((error) => {
-        return of([]);
-      })
+     
     );
   
     this.results.emit(searchResults$);
