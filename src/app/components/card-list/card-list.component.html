@@ -1,0 +1,11 @@
+<mat-card appearance="outlined" class="list">
+  <mat-card-content>
+    <mat-list>
+      @for (item of paginatedResults; track item.id) {
+      <mat-list-item (click)="viewDetails(item)" class="list-item">
+        <p>{{ item.name }} ({{ item.type }})</p>
+      </mat-list-item>
+      }
+    </mat-list>
+  </mat-card-content>
+</mat-card>

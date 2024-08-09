@@ -1,9 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { SearchResult } from '@interfaces/searchResult';
 
 @Component({
-  selector: 'app-paginator',
+  selector: 'paginator',
   standalone: true,
   imports: [  MatPaginatorModule],
   templateUrl: './paginator.component.html',
@@ -11,11 +11,11 @@ import { SearchResult } from '@interfaces/searchResult';
 })
 export class PaginatorComponent {
   @Input() results : SearchResult[]=[] 
+  @Output() paginatedResults = new EventEmitter<SearchResult[]>();
   pageSize: number = 5;
-  paginatedResults: SearchResult[] = [];
   onPageChange(event: PageEvent): void {
     const startIndex: number = event.pageIndex * event.pageSize;
     const endIndex: number = startIndex + event.pageSize;
-    this.paginatedResults = this.results.slice(startIndex, endIndex);
+    this.paginatedResults.emit(this.results.slice(startIndex, endIndex));
   }
 }

@@ -6,25 +6,11 @@
   <app-search-song-form (results)="handleSearch($event)"></app-search-song-form>
   @if (searchResults$ | async; as results){
 
-  <mat-paginator
-    [length]="results.length"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 25, 100]"
-    aria-label="Select page"
-    (page)="onPageChange($event)"
-  >
-  </mat-paginator>
-  <mat-card appearance="outlined" class="list">
-    <mat-card-content>
-      <mat-list>
-        @for (item of paginatedResults; track item.id) {
-        <mat-list-item (click)="viewDetails(item)" class="list-item">
-          <p>{{ item.name }} ({{ item.type }})</p>
-        </mat-list-item>
-        }
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
+  <paginator
+    [results]="results"
+    (paginatedResults)="onPaginatedResults($event)"
+  ></paginator>
+  <card-list [paginatedResults]="paginatedResults" />
 
   } @else if (isLoading ) {
   <mat-spinner></mat-spinner>

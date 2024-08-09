@@ -14,6 +14,8 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AsyncPipe } from '@angular/common';
 import { LoginBtnComponent } from '@components/login-btn/login-btn.component';
 import { SearchSongFormComponent } from '@components/searchSongForm/search-song-form.component';
+import { PaginatorComponent } from '@components/paginator/paginator.component';
+import { CardListComponent } from "../../components/card-list/card-list.component";
 interface SearchResult {
   id: string;
   type: string;
@@ -37,8 +39,10 @@ interface SearchResult {
     MatPaginatorModule,
     SearchSongFormComponent,
     AsyncPipe,
-    LoginBtnComponent
-  ],
+    LoginBtnComponent,
+    PaginatorComponent,
+    CardListComponent
+],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
@@ -52,6 +56,9 @@ export class HomeComponent   {
   searchQuery: string = '';
   results: SearchResult[] = [];
   paginatedResults: SearchResult[] = [];
+  onPaginatedResults(paginatedResults: SearchResult[]) {
+    this.paginatedResults= paginatedResults
+  }
   pageSize: number = 5;
   handleSearch(results$: Observable<SearchResult[]>) {
     this.isLoading = true
@@ -63,13 +70,6 @@ export class HomeComponent   {
     finalize(()=>this.isLoading= false));
 
 }
-
-  onPageChange(event: PageEvent): void {
-    const startIndex: number = event.pageIndex * event.pageSize;
-    const endIndex: number = startIndex + event.pageSize;
-    this.paginatedResults = this.results.slice(startIndex, endIndex);
-  }
-
 
   viewDetails(item: SearchResult): void {
     this.router.navigate(['/details', item.type, item.id]);
