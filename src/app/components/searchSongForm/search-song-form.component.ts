@@ -1,19 +1,15 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { SpotifyService } from '../../services/api/spotify.service';
 import {  Observable, map } from 'rxjs';
-import { SpotifySearch } from '@services/api/search.interface';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { SpotifySearch } from '@services/api/search.interface';
+import { SearchResult } from '@interfaces/searchResult';
+import { SpotifyService } from '@services/api/spotify.service';
 
-interface SearchResult {
-  id: string;
-  type: string;
-  name: string;
 
-}
 
 @Component({
   selector: 'app-search-song-form',
@@ -25,18 +21,15 @@ interface SearchResult {
 export class SearchSongFormComponent {
   @Output() results = new EventEmitter<Observable<SearchResult[]>>();
 
-  constructor(private spotifyService: SpotifyService) {}
-  input:string=''
-  onSearch(searchQuery: string): void {
- 
-
-
-    if (!searchQuery.trim()) return;
+  constructor(private spotifyService: SpotifyService) { }
   
+  input: string = ''
+  
+  onSearch(searchQuery: string): void {
+    if (!searchQuery.trim()) return;
+
     const searchResults$ = this.spotifyService.search(searchQuery).pipe(
-      map((response) => this.processSearchResults(response)),
-     
-    );
+      map((response) => this.processSearchResults(response)));
   
     this.results.emit(searchResults$);
   }

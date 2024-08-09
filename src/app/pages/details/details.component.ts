@@ -28,9 +28,7 @@ export class DetailsComponent {
     private spotifyService: SpotifyService,
   ) {
     this.details$ = this.route.params.pipe(
-      switchMap(params => this.spotifyService.getDetails(params['type'], params['id'])),
-      
-    )
+      switchMap(params => this.spotifyService.getDetails(params['type'], params['id'])))
   }
 
   goBack(): void {
