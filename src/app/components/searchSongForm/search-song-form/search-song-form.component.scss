@@ -1,0 +1,9 @@
+.search-form {
+  display: flex;
+  justify-content: space-between;
+  min-width: 30vw;
+  gap: 2rem;
+}
+mat-form-field {
+  width: 100%;
+}

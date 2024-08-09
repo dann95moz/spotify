@@ -1,32 +1,10 @@
 <div class="home-container">
-  <app-search-song-form></app-search-song-form>
   <h1>Buscador de spotify</h1>
   <h3>Busca tu canción, album o artista favorito</h3>
-  <form action="submit" (ngSubmit)="onSearch()" class="search">
-    <mat-form-field>
-      <input
-        matInput
-        [(ngModel)]="searchQuery"
-        placeholder="Buscar en Spotify"
-        name="queryMusic"
-      />
-    </mat-form-field>
-    <button mat-fab color="primary" [disabled]="isLoading" type="submit">
-      <mat-icon>search</mat-icon>
-    </button>
-  </form>
-  <button
-    (click)="login()"
-    mat-raised-button
-    style="background-color: #1ed760; color: black"
-    class="login-btn"
-  >
-    Login with Spotify
-  </button>
-  @if (isLoading ) {
-  <mat-spinner></mat-spinner>
 
-  } @if(results.length){
+  <login-button></login-button>
+  <app-search-song-form (results)="handleSearch($event)"></app-search-song-form>
+  @if (searchResults$ | async; as results){
 
   <mat-paginator
     [length]="results.length"
@@ -34,11 +12,8 @@
     [pageSizeOptions]="[5, 10, 25, 100]"
     aria-label="Select page"
     (page)="onPageChange($event)"
-    class="component-bg"
   >
   </mat-paginator>
-  } @if (!isLoading && results.length) {
-
   <mat-card appearance="outlined" class="list">
     <mat-card-content>
       <mat-list>
@@ -51,7 +26,8 @@
     </mat-card-content>
   </mat-card>
 
-  } @if (!isLoading && !results.length ) {
-  <p>No se encontraron resultados.</p>
+  } @else if (isLoading ) {
+  <mat-spinner></mat-spinner>
+
   }
 </div>

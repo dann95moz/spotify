@@ -1,13 +1,14 @@
-<form (ngSubmit)="onSearch(searchInput.value)" class="search-form">
-    <mat-form-field>
-      <input
-        matInput
-        #searchInput
-        placeholder="Buscar en Spotify"
-        name="queryMusic"
-      />
-    </mat-form-field>
-    <button mat-fab color="primary" type="submit">
-      <mat-icon>search</mat-icon>
-    </button>
-  </form>
+<form (ngSubmit)="onSearch(input)" action="submit" class="search-form">
+  <mat-form-field>
+    <input
+      matInput
+      #searchInput
+      placeholder="Buscar en Spotify atomic"
+      name="queryMusic"
+      [(ngModel)]="input"
+    />
+  </mat-form-field>
+  <button mat-fab color="primary" type="submit">
+    <mat-icon>search</mat-icon>
+  </button>
+</form>
