@@ -1,4 +1,4 @@
-import { map, Observable } from 'rxjs';
+import { finalize, map, Observable, tap } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -12,6 +12,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { SpotifyService } from '@services/api/spotify.service';
 import { User } from '@services/api/user.interface';
 import { Item } from '@services/api/playList.interface';
+import { SearchSongFormComponent } from '../../components/searchSongForm/search-song-form.component';
+import { SearchResult } from '@interfaces/searchResult';
+import { PaginatorComponent } from '@components/paginator/paginator.component';
+import { CardListComponent } from '@components/card-list/card-list.component';
 @Component({
   selector: 'app-logged',
   standalone: true,
@@ -25,36 +29,38 @@ import { Item } from '@services/api/playList.interface';
     MatCardModule,
     MatIcon,
     MatButtonModule,
+    SearchSongFormComponent,
+    PaginatorComponent,
+    CardListComponent,
   ],
   templateUrl: './logged.component.html',
   styleUrl: './logged.component.scss',
 })
 export class LoggedComponent implements OnInit {
   searchQuery: string = '';
-  searchResults: any;
+  searchResults$: Observable<SearchResult[]> | null = null;
+  paginatedResults: SearchResult[] = [];
+  results: SearchResult[] = [];
   isLoading: boolean = false;
   userProfile: any;
   playlists$: Observable<Item[]>;
-  constructor(private spotifyService: SpotifyService,private router:Router) {
- 
+  pageSize: number = 5;
+  constructor(private spotifyService: SpotifyService, private router: Router) {
     this.playlists$ = this.spotifyService.getUserPlaylists().pipe(
       map((listObject) => {
         return listObject.items;
       })
     );
-    
   }
 
   ngOnInit(): void {
     this.loadUserProfile();
-
-    
   }
 
-  goToPlaylistDetails(playlistId:string) {
+  goToPlaylistDetails(playlistId: string) {
     this.router.navigate([`/logged/playlist/`, playlistId]);
   }
- 
+
   loadUserProfile() {
     this.spotifyService.getUserProfile().subscribe({
       next: (profile: User) => {
@@ -65,19 +71,17 @@ export class LoggedComponent implements OnInit {
       },
     });
   }
-  onSearch() {
+  handleSearch(results$: Observable<SearchResult[]>) {
     this.isLoading = true;
-    this.spotifyService
-      .search(this.searchQuery, 'track,artist,album', true)
-      .subscribe({
-        next: (results) => {
-          this.searchResults = results;
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Search error:', error);
-          this.isLoading = false;
-        },
-      });
+    this.searchResults$ = results$.pipe(
+      tap((response) => {
+        this.results = response;
+        this.paginatedResults = response.slice(0, this.pageSize);
+      }),
+      finalize(() => (this.isLoading = false))
+    );
+  }
+  onPaginatedResults(paginatedResults: SearchResult[]) {
+    this.paginatedResults = paginatedResults;
   }
 }

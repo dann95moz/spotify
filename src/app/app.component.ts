@@ -9,9 +9,4 @@ import { PlayerService } from './services/player/player.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit {
-
-  ngOnInit(): void {
-  
-  }
-}
+export class AppComponent {}

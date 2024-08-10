@@ -2,7 +2,7 @@
   <h1>Buscador de spotify</h1>
   <h3>Busca tu canción, album o artista favorito</h3>
 
-  <login-button></login-button>
+  <login-button/>
   <app-search-song-form (results)="handleSearch($event)"></app-search-song-form>
   @if (searchResults$ | async; as results){
 
