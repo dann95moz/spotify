@@ -34,6 +34,4 @@ export class DetailsComponent {
   goBack(): void {
     this.router.navigate(['/']);
   }
-
- 
 }
