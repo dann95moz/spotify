@@ -1,6 +1,6 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { PlayerService } from '../../services/player/player.service';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { PrivatePlayList } from '../../services/api/privatePlayList';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SpotifyService } from '../../services/api/spotify.service';
@@ -15,11 +15,11 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './playlist-details.component.html',
   styleUrls: ['./playlist-details.component.scss'],
 })
-export class PlaylistDetailsComponent implements AfterViewInit {
-
+export class PlaylistDetailsComponent implements OnInit , OnDestroy{
+  defaultImgUrl = 'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'
   playListDetails$: Observable<PrivatePlayList>;
-  deviceId?: string;
   currentVolume: number = 0.5;
+  isDeviceReady: Observable<boolean>= new Observable()
   constructor(
     private playerService: PlayerService,
     private router:Router,
@@ -33,18 +33,21 @@ export class PlaylistDetailsComponent implements AfterViewInit {
       )
     );
   }
+  ngOnInit(): void {
 
-  ngAfterViewInit(): void {
-   
-    this.deviceId = this.playerService.getDeviceId();
-    
-    
+this.playerService.initializePlayer()
+  this.isDeviceReady= this.playerService.isDeviceReady
+ }
+
+  ngOnDestroy(): void {
+    this.pause()
   }
   goToLogged() {
     this.router.navigate(['/logged'])
     }
   playPlaylist() {
-    if (!this.deviceId) {
+ 
+    if (!this.playerService.getDeviceId()) {
       console.error('No device ID available.');
       return;
     }

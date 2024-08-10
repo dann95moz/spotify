@@ -10,7 +10,8 @@ import { AuthService } from '../spotifyAuth/auth.service';
 export class PlayerService {
   private player: any;
   private deviceId: string | undefined;
-  public deviceIsReady: BehaviorSubject<boolean> = new BehaviorSubject(false)
+  public deviceIsReadySubject: BehaviorSubject<boolean> = new BehaviorSubject(false)
+  public isDeviceReady = this.deviceIsReadySubject.asObservable()
   //TODO: convert to observable
   constructor(private authService: AuthService, private http: HttpClient) {
 
@@ -18,6 +19,7 @@ export class PlayerService {
 
   public initializePlayer(): void {
     (window as any).onSpotifyWebPlaybackSDKReady = () => {
+    
       this.player = new (window as any).Spotify.Player({
         name: 'Angular Spotify Player',
         getOAuthToken: (cb: (token: string) => void) => {
@@ -45,6 +47,7 @@ export class PlayerService {
     this.player.addListener('ready', ({ device_id }: { device_id: string }) => {
       console.log('Ready with Device ID in service', device_id);
       this.deviceId = device_id;
+      this.deviceIsReadySubject.next(true)
     });
 
     this.player.addListener(
@@ -60,8 +63,6 @@ export class PlayerService {
     this.player.connect().then((success: boolean) => {
       if (!success) {
         console.error('The Spotify Player failed to connect.');
-      } else {
-        this.deviceIsReady.next(true)
       }
     });
   }

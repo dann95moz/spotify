@@ -8,12 +8,12 @@
 <div class="album-info">
   <h3>{{ playlists.name }}</h3>
   <img
-    [src]="playlists.images[0].url"
+    [src]="playlists.images[0].url ||defaultImgUrl"
     alt="{{ playlists.name }}"
-    [height]="playlists.images[0].height"
-    [width]="playlists.images[0].width"
+    [height]="playlists.images[0].height|| 300"
+    [width]="playlists.images[0].width || 300"
   />
-
+ @if(isDeviceReady | async){
   <div class="controls">
     <button mat-raised-button (click)="playPlaylist()">
       Reproducir Playlist ✨
@@ -31,5 +31,7 @@
       />
     </mat-slider>
   </div>
+ }
+
 </div>
 }
