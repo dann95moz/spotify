@@ -3,36 +3,16 @@
   <p>Welcome, {{ userProfile.display_name }}!</p>
 
   }
-  <form (ngSubmit)="onSearch()" class="search">
-    <mat-form-field class="input">
-      <input
-        matInput
-        [(ngModel)]="searchQuery"
-        name="searchQuery"
-        placeholder="Buscar en Spotify"
-      />
-    </mat-form-field>
-    <button mat-fab color="primary" [disabled]="isLoading" type="submit">
-      <mat-icon>search</mat-icon>
-    </button>
-  </form>
+  <app-search-song-form (results)="handleSearch($event)"></app-search-song-form>
 
   <div class="lists">
-    @if(searchResults) {
-
-    <mat-card appearance="outlined" class="searched-list">
-      <mat-card-content>
-        <mat-list>
-          @for (item of searchResults.tracks.items; track item) {
-
-          <mat-list-item>
-            <p>{{ item.name }} ({{ item.type }})</p>
-          </mat-list-item>
-
-          }
-        </mat-list>
-      </mat-card-content> </mat-card
-    >}@else{
+    @if(searchResults$ | async; as searchResults) {
+      <paginator
+      [results]="results"
+      (paginatedResults)="onPaginatedResults($event)"
+    ></paginator>
+    <card-list [paginatedResults]="paginatedResults" />
+  }@else{
     <h3>Listas de reproducción</h3>
     <div class="play-list-collection">
       @if ((playlists$ | async ); as lists ) { @for(list of lists; track list){
