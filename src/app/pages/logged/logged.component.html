@@ -1,40 +1,27 @@
 <div class="logged-container">
-  @if(userProfile){
+  @if(userProfile | async ; as userProfile){
   <p>Welcome, {{ userProfile.display_name }}!</p>
 
   }
-  <app-search-song-form (results)="handleSearch($event)"></app-search-song-form>
 
   <div class="lists">
-    @if(searchResults$ | async; as searchResults) {
-      <paginator
-      [results]="results"
-      (paginatedResults)="onPaginatedResults($event)"
-    ></paginator>
-    <card-list [paginatedResults]="paginatedResults" />
-  }@else{
+    <paginated-card-list></paginated-card-list>
     <h3>Listas de reproducción</h3>
     <div class="play-list-collection">
-      @if ((playlists$ | async ); as lists ) { @for(list of lists; track list){
-      <mat-card
-        appearance="outlined"
-        class="playlist"
-        (click)="goToPlaylistDetails(list.id)"
-      >
-        <mat-card-content>
-          <h3>{{ list.name }}</h3>
-          <img
-            [src]="list.images[0].url"
-            alt="{{ list.images[0].height }}"
-            height=" 300px "
-          />
-          <p>{{ list.tracks.total }} canciones</p>
-        </mat-card-content>
-      </mat-card>
-      } } @else {
+      @if ((playlists$ | async ); as lists ){
+        @for(list of playlists$ | async; track list){
+        <mat-card appearance="outlined" class="playlist" (click)="goToPlaylistDetails(list.id)">
+          <mat-card-content>
+            <h3>{{ list.name }}</h3>
+            <img [src]="list.images[0].url" alt="{{ list.images[0].height }}" height=" 300px " />
+            <p>{{ list.tracks.total }} canciones</p>
+          </mat-card-content>
+        </mat-card>
+        } 
+      } 
+      @else {
       <p>cargando listas de reproduccion</p>
       }
     </div>
-    }
   </div>
 </div>

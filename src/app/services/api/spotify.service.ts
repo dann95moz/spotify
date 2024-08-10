@@ -7,6 +7,7 @@ import { TokenResponse } from './token.interface';
 import { SpotifySearch } from './search.interface';
 import { PlayList } from './playList.interface';
 import { PrivatePlayList } from './privatePlayList';
+import { User } from './user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -95,10 +96,10 @@ export class SpotifyService {
     );
   }
 
-  getUserProfile(): Observable<any> {
+  getUserProfile() :Observable<User>{
     return this.ensureTokenValid(true).pipe(
       switchMap(() => {
-        return this.http.get(this.userUri, { headers: this.getUserHeaders() });
+        return this.http.get<User>(this.userUri, { headers: this.getUserHeaders() });
       }),
       catchError(this.handleError)
     );
