@@ -3,80 +3,73 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from '../spotifyAuth/auth.service';
-import { SpotifyService } from '../api/spotify.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlayerService {
-  private player: any; // Tipo 'any' para evitar problemas con el espacio de nombres
+  private player: any;
   private deviceId: string | undefined;
 
-  constructor(private authService: AuthService, private http: HttpClient) {
-    // this.initializePlayer(); // Inicializar el reproductor aquí
-  }
+  constructor(private authService: AuthService, private http: HttpClient) {}
 
   public initializePlayer(): void {
     (window as any).onSpotifyWebPlaybackSDKReady = () => {
-      const token = this.authService.getTokenFromStorage(); // Obtén el token de acceso de manera segura
-
       this.player = new (window as any).Spotify.Player({
         name: 'Angular Spotify Player',
         getOAuthToken: (cb: (token: string) => void) => {
-          const token = this.authService.getTokenFromStorage(); // Obtén el token de acceso de manera segura
-          if (token) {
-            // console.log(token);
-
-            cb(token);
-          } else {
-            console.error('No token available');
-          }
+          this.authService.getTokenObservable().subscribe({
+            next: (token) => {
+              if (token) {
+                cb(token);
+              } else {
+                console.error('No token available');
+              }
+            },
+            error: (error) => console.error('Error getting token:', error),
+          });
         },
         volume: 0.5,
       });
 
-      this.player.addListener(
-        'ready',
-        ({ device_id }: { device_id: string }) => {
-          console.log('Ready with Device ID in service', device_id);
-          this.deviceId = device_id;
-        }
-      );
-
-      this.player.addListener(
-        'not_ready',
-        ({ device_id }: { device_id: string }) => {
-          this.deviceId = undefined;
-        }
-      );
-
-      this.player.connect().then((success: boolean) => {
-        if (!success) {
-          console.error('The Spotify Player failed to connect.');
-        }
-      });
+      this.setupPlayerListeners();
+      this.connectPlayer();
     };
   }
 
+  private setupPlayerListeners(): void {
+    this.player.addListener('ready', ({ device_id }: { device_id: string }) => {
+      console.log('Ready with Device ID in service', device_id);
+      this.deviceId = device_id;
+    });
+
+    this.player.addListener(
+      'not_ready',
+      ({ device_id }: { device_id: string }) => {
+        console.log('Device ID is not ready:', device_id);
+        this.deviceId = undefined;
+      }
+    );
+  }
+
+  private connectPlayer(): void {
+    this.player.connect().then((success: boolean) => {
+      if (!success) {
+        console.error('The Spotify Player failed to connect.');
+      }
+    });
+  }
+
   play(): void {
-    this.player
-      ?.resume()
-      .then(() => {})
-      .catch(this.handleError);
+    this.player?.resume().catch(this.handleError);
   }
 
   pause(): void {
-    this.player
-      ?.pause()
-      .then(() => {})
-      .catch(this.handleError);
+    this.player?.pause().catch(this.handleError);
   }
 
   setVolume(volume: number): void {
-    this.player
-      ?.setVolume(volume)
-      .then(() => {})
-      .catch(this.handleError);
+    this.player?.setVolume(volume).catch(this.handleError);
   }
 
   playPlaylist(playlistUri: string): Observable<void> {
@@ -85,27 +78,19 @@ export class PlayerService {
     }
 
     return this.authService.getTokenObservable().pipe(
-      switchMap((token: string | null) => {
+      switchMap((token) => {
         if (!token) {
           return throwError(
             () => new Error('User token is invalid or expired.')
           );
         }
 
-        const body = {
-          context_uri: playlistUri,
-        };
-
+        const body = { context_uri: playlistUri };
         return this.http
           .put<void>(
             `https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`,
             body,
-            {
-              headers: new HttpHeaders({
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              }),
-            }
+            { headers: this.getHeaders(token) }
           )
           .pipe(
             catchError((error) => {
@@ -117,24 +102,7 @@ export class PlayerService {
     );
   }
 
-  setDeviceId(deviceId: string) {
-    this.deviceId = deviceId;
-  }
-
-  getDeviceId() {
-    return this.deviceId;
-  }
-
-  private handleError(error: any) {
-    console.error('An error occurred:', error);
-    return throwError(
-      () => new Error('Something bad happened; please try again later.')
-    );
-  }
-
   playTrack(trackUri: string): Observable<void> {
-    console.log(this.deviceId);
-
     if (!this.deviceId) {
       return throwError(() => new Error('No device ID available.'));
     }
@@ -151,21 +119,38 @@ export class PlayerService {
           .put(
             'https://api.spotify.com/v1/me/player/play',
             { uris: [trackUri] },
-            {
-              headers: new HttpHeaders({
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              }),
-            }
+            { headers: this.getHeaders(token) }
           )
           .pipe(
-            switchMap(() => of(void 0)), // Convert observable to void
+            switchMap(() => of(void 0)),
             catchError((error) => {
               console.error('Error playing track:', error);
               return throwError(() => new Error('Failed to play track.'));
             })
           );
       })
+    );
+  }
+
+  setDeviceId(deviceId: string): void {
+    this.deviceId = deviceId;
+  }
+
+  getDeviceId(): string | undefined {
+    return this.deviceId;
+  }
+
+  private getHeaders(token: string): HttpHeaders {
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+  }
+
+  private handleError(error: any): Observable<never> {
+    console.error('An error occurred:', error);
+    return throwError(
+      () => new Error('Something bad happened; please try again later.')
     );
   }
 }
