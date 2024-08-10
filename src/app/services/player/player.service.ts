@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from '../spotifyAuth/auth.service';
 
@@ -10,8 +10,11 @@ import { AuthService } from '../spotifyAuth/auth.service';
 export class PlayerService {
   private player: any;
   private deviceId: string | undefined;
+  public deviceIsReady: BehaviorSubject<boolean> = new BehaviorSubject(false)
+  //TODO: convert to observable
+  constructor(private authService: AuthService, private http: HttpClient) {
 
-  constructor(private authService: AuthService, private http: HttpClient) {}
+  }
 
   public initializePlayer(): void {
     (window as any).onSpotifyWebPlaybackSDKReady = () => {
@@ -31,8 +34,9 @@ export class PlayerService {
         },
         volume: 0.5,
       });
-
+      console.log('starting listeners')
       this.setupPlayerListeners();
+      console.log('starting connection')
       this.connectPlayer();
     };
   }
@@ -56,6 +60,8 @@ export class PlayerService {
     this.player.connect().then((success: boolean) => {
       if (!success) {
         console.error('The Spotify Player failed to connect.');
+      } else {
+        this.deviceIsReady.next(true)
       }
     });
   }

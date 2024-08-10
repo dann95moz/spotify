@@ -7,6 +7,7 @@ import { SpotifyService } from '@services/api/spotify.service';
 import { User } from '@services/api/user.interface';
 import { Item } from '@services/api/playList.interface';
 import { PaginatedCardListComponent } from "../../components/paginated-card-list/paginated-card-list.component";
+import { PlayerService } from '@services/player/player.service';
 @Component({
   selector: 'app-logged',
   standalone: true,
@@ -21,7 +22,8 @@ import { PaginatedCardListComponent } from "../../components/paginated-card-list
 export class LoggedComponent implements OnInit {
   userProfile:Observable<User> = new Observable()
   playlists$: Observable<Item[]>;
-  constructor(private spotifyService: SpotifyService, private router: Router) {
+  constructor(private spotifyService: SpotifyService, private router: Router,  private playerService: PlayerService) {
+    this.playerService.initializePlayer()
     this.playlists$ = this.spotifyService.getUserPlaylists().pipe(
       map((listObject) => listObject.items)
     );

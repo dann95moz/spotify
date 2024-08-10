@@ -1,3 +1,9 @@
+<button mat-raised-button (click)="goToLogged()">
+  <mat-icon>
+    arrow_back
+  </mat-icon>
+  volver a las listas
+</button>
 @if(playListDetails$|async ;as playlists) {
 <div class="album-info">
   <h3>{{ playlists.name }}</h3>
