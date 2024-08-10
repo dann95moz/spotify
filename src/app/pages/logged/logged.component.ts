@@ -19,14 +19,11 @@ import { PaginatedCardListComponent } from "../../components/paginated-card-list
   styleUrl: './logged.component.scss',
 })
 export class LoggedComponent implements OnInit {
-  isLoading: boolean = false;
   userProfile:Observable<User> = new Observable()
   playlists$: Observable<Item[]>;
   constructor(private spotifyService: SpotifyService, private router: Router) {
     this.playlists$ = this.spotifyService.getUserPlaylists().pipe(
-      map((listObject) => {
-        return listObject.items;
-      })
+      map((listObject) => listObject.items)
     );
   }
 
