@@ -4,7 +4,7 @@ import { Observable, switchMap, tap } from 'rxjs';
 import { PrivatePlayList } from '../../services/api/privatePlayList';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SpotifyService } from '../../services/api/spotify.service';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,7 +30,7 @@ export class PlaylistDetailsComponent implements OnInit , OnDestroy{
     this.playListDetails$ = this.activatedRoute.params.pipe(
       switchMap((params) =>
         this.spotifyService.getPlaylistDetails(params['playlistId'])
-      )
+      ),
     );
   }
   ngOnInit(): void {

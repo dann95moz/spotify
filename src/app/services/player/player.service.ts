@@ -12,7 +12,6 @@ export class PlayerService {
   private deviceId: string | undefined;
   public deviceIsReadySubject: BehaviorSubject<boolean> = new BehaviorSubject(false)
   public isDeviceReady = this.deviceIsReadySubject.asObservable()
-  //TODO: convert to observable
   constructor(private authService: AuthService, private http: HttpClient) {
 
   }
