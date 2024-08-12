@@ -15,7 +15,8 @@
   }@else{
     <h3>Listas de reproducción</h3>
     <div class="play-list-collection">
-      @if ((playlists$ | async ); as lists ) { @for(list of lists; track list){
+      @if ((playlists$ | async ); as lists ) {
+         @for(list of lists; track list){
       <mat-card
         appearance="outlined"
         class="playlist"
