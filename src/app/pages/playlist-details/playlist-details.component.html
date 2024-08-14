@@ -5,15 +5,25 @@
   volver a las listas
 </button>
 @if(playListDetails$|async ;as playlists) {
-<div class="album-info">
   <h3>{{ playlists.name }}</h3>
+  <div class="playlist-container">
+<div class="album-info">
   <img
     [src]="playlists.images[0].url ||defaultImgUrl"
     alt="{{ playlists.name }}"
     [height]="playlists.images[0].height|| 300"
     [width]="playlists.images[0].width || 300"
   />
- @if(isDeviceReady | async){
+ 
+
+</div>
+<div class="playlist-songs">
+@for(item of playlists.tracks.items ;track item){
+  <p>{{item.track.name}}</p>
+}
+</div>
+</div>
+@if(isDeviceReady | async){
   <div class="controls">
     <button mat-raised-button (click)="playPlaylist()">
       Reproducir Playlist ✨
@@ -32,6 +42,4 @@
     </mat-slider>
   </div>
  }
-
-</div>
 }

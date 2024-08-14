@@ -9,7 +9,7 @@
     <h3>Listas de reproducción</h3>
     <div class="play-list-collection">
       @if ((playlists$ | async ); as lists ){
-        @for(list of playlists$ | async; track list){
+        @for(list of playlists$ | async; track list.id){
         <mat-card appearance="outlined" class="playlist" (click)="goToPlaylistDetails(list.id)">
           <mat-card-content>
             <h3>{{ list.name }}</h3>
