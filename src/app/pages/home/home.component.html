@@ -2,18 +2,6 @@
   <h1>Buscador de spotify</h1>
   <h3>Busca tu canción, album o artista favorito</h3>
 
-  <login-button/>
-  <app-search-song-form (results)="handleSearch($event)"></app-search-song-form>
-  @if (searchResults$ | async; as results){
-
-  <paginator
-    [results]="results"
-    (paginatedResults)="onPaginatedResults($event)"
-  ></paginator>
-  <card-list [paginatedResults]="paginatedResults" />
-
-  } @else if (isLoading ) {
-  <mat-spinner></mat-spinner>
-
-  }
+  <login-button />
+  <paginated-card-list></paginated-card-list>
 </div>

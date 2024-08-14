@@ -1,1 +1,13 @@
-<p>paginated-card-list works!</p>
+<app-search-song-form (results)="handleSearch($event)"></app-search-song-form>
+@if (searchResults$ | async; as results){
+
+<paginator
+  [results]="results"
+  (paginatedResults)="onPaginatedResults($event)"
+></paginator>
+<card-list [paginatedResults]="paginatedResults" />
+
+} @else if (isLoading ) {
+<mat-spinner></mat-spinner>
+
+}

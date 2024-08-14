@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from '../spotifyAuth/auth.service';
 
@@ -10,11 +10,16 @@ import { AuthService } from '../spotifyAuth/auth.service';
 export class PlayerService {
   private player: any;
   private deviceId: string | undefined;
+  public deviceIsReadySubject: BehaviorSubject<boolean> = new BehaviorSubject(false)
+  public isDeviceReady = this.deviceIsReadySubject.asObservable()
+  //TODO: convert to observable
+  constructor(private authService: AuthService, private http: HttpClient) {
 
-  constructor(private authService: AuthService, private http: HttpClient) {}
+  }
 
   public initializePlayer(): void {
     (window as any).onSpotifyWebPlaybackSDKReady = () => {
+    
       this.player = new (window as any).Spotify.Player({
         name: 'Angular Spotify Player',
         getOAuthToken: (cb: (token: string) => void) => {
@@ -31,8 +36,9 @@ export class PlayerService {
         },
         volume: 0.5,
       });
-
+      console.log('starting listeners')
       this.setupPlayerListeners();
+      console.log('starting connection')
       this.connectPlayer();
     };
   }
@@ -41,6 +47,7 @@ export class PlayerService {
     this.player.addListener('ready', ({ device_id }: { device_id: string }) => {
       console.log('Ready with Device ID in service', device_id);
       this.deviceId = device_id;
+      this.deviceIsReadySubject.next(true)
     });
 
     this.player.addListener(
